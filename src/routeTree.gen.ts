@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MechanicRouteImport } from './routes/mechanic'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomerIndexRouteImport } from './routes/customer.index'
@@ -16,6 +17,11 @@ import { Route as CustomerProfileRouteImport } from './routes/customer.profile'
 import { Route as CustomerHistoryRouteImport } from './routes/customer.history'
 import { Route as CustomerRequestServiceRouteImport } from './routes/customer.request.$service'
 
+const MechanicRoute = MechanicRouteImport.update({
+  id: '/mechanic',
+  path: '/mechanic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomerRoute = CustomerRouteImport.update({
   id: '/customer',
   path: '/customer',
@@ -50,6 +56,7 @@ const CustomerRequestServiceRoute = CustomerRequestServiceRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
+  '/mechanic': typeof MechanicRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/customer/': typeof CustomerIndexRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/mechanic': typeof MechanicRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/customer': typeof CustomerIndexRoute
@@ -66,6 +74,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
+  '/mechanic': typeof MechanicRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/customer/': typeof CustomerIndexRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/customer'
+    | '/mechanic'
     | '/customer/history'
     | '/customer/profile'
     | '/customer/'
@@ -83,6 +93,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/mechanic'
     | '/customer/history'
     | '/customer/profile'
     | '/customer'
@@ -91,6 +102,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/customer'
+    | '/mechanic'
     | '/customer/history'
     | '/customer/profile'
     | '/customer/'
@@ -100,10 +112,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CustomerRoute: typeof CustomerRouteWithChildren
+  MechanicRoute: typeof MechanicRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/mechanic': {
+      id: '/mechanic'
+      path: '/mechanic'
+      fullPath: '/mechanic'
+      preLoaderRoute: typeof MechanicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/customer': {
       id: '/customer'
       path: '/customer'
@@ -170,6 +190,7 @@ const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CustomerRoute: CustomerRouteWithChildren,
+  MechanicRoute: MechanicRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
