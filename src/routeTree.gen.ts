@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomerIndexRouteImport } from './routes/customer.index'
+import { Route as CustomerRequestServiceRouteImport } from './routes/customer.request.$service'
 
 const CustomerRoute = CustomerRouteImport.update({
   id: '/customer',
@@ -28,28 +29,41 @@ const CustomerIndexRoute = CustomerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CustomerRoute,
 } as any)
+const CustomerRequestServiceRoute = CustomerRequestServiceRouteImport.update({
+  id: '/request/$service',
+  path: '/request/$service',
+  getParentRoute: () => CustomerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
   '/customer/': typeof CustomerIndexRoute
+  '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/customer': typeof CustomerIndexRoute
+  '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
   '/customer/': typeof CustomerIndexRoute
+  '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/customer' | '/customer/'
+  fullPaths: '/' | '/customer' | '/customer/' | '/customer/request/$service'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customer'
-  id: '__root__' | '/' | '/customer' | '/customer/'
+  to: '/' | '/customer' | '/customer/request/$service'
+  id:
+    | '__root__'
+    | '/'
+    | '/customer'
+    | '/customer/'
+    | '/customer/request/$service'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,15 +94,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerIndexRouteImport
       parentRoute: typeof CustomerRoute
     }
+    '/customer/request/$service': {
+      id: '/customer/request/$service'
+      path: '/request/$service'
+      fullPath: '/customer/request/$service'
+      preLoaderRoute: typeof CustomerRequestServiceRouteImport
+      parentRoute: typeof CustomerRoute
+    }
   }
 }
 
 interface CustomerRouteChildren {
   CustomerIndexRoute: typeof CustomerIndexRoute
+  CustomerRequestServiceRoute: typeof CustomerRequestServiceRoute
 }
 
 const CustomerRouteChildren: CustomerRouteChildren = {
   CustomerIndexRoute: CustomerIndexRoute,
+  CustomerRequestServiceRoute: CustomerRequestServiceRoute,
 }
 
 const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
