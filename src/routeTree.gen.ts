@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MechanicIndexRouteImport } from './routes/mechanic.index'
 import { Route as CustomerIndexRouteImport } from './routes/customer.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MechanicProfileRouteImport } from './routes/mechanic.profile'
 import { Route as MechanicEarningsRouteImport } from './routes/mechanic.earnings'
 import { Route as CustomerProfileRouteImport } from './routes/customer.profile'
@@ -51,6 +52,11 @@ const CustomerIndexRoute = CustomerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CustomerRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const MechanicProfileRoute = MechanicProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -79,24 +85,25 @@ const CustomerRequestServiceRoute = CustomerRequestServiceRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/mechanic': typeof MechanicRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/mechanic/earnings': typeof MechanicEarningsRoute
   '/mechanic/profile': typeof MechanicProfileRoute
+  '/admin/': typeof AdminIndexRoute
   '/customer/': typeof CustomerIndexRoute
   '/mechanic/': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/mechanic/earnings': typeof MechanicEarningsRoute
   '/mechanic/profile': typeof MechanicProfileRoute
+  '/admin': typeof AdminIndexRoute
   '/customer': typeof CustomerIndexRoute
   '/mechanic': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
@@ -104,13 +111,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/mechanic': typeof MechanicRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/mechanic/earnings': typeof MechanicEarningsRoute
   '/mechanic/profile': typeof MechanicProfileRoute
+  '/admin/': typeof AdminIndexRoute
   '/customer/': typeof CustomerIndexRoute
   '/mechanic/': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
@@ -126,17 +134,18 @@ export interface FileRouteTypes {
     | '/customer/profile'
     | '/mechanic/earnings'
     | '/mechanic/profile'
+    | '/admin/'
     | '/customer/'
     | '/mechanic/'
     | '/customer/request/$service'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/customer/history'
     | '/customer/profile'
     | '/mechanic/earnings'
     | '/mechanic/profile'
+    | '/admin'
     | '/customer'
     | '/mechanic'
     | '/customer/request/$service'
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/customer/profile'
     | '/mechanic/earnings'
     | '/mechanic/profile'
+    | '/admin/'
     | '/customer/'
     | '/mechanic/'
     | '/customer/request/$service'
@@ -157,7 +167,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CustomerRoute: typeof CustomerRouteWithChildren
   MechanicRoute: typeof MechanicRouteWithChildren
 }
@@ -206,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerIndexRouteImport
       parentRoute: typeof CustomerRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/mechanic/profile': {
       id: '/mechanic/profile'
       path: '/profile'
@@ -244,6 +261,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface CustomerRouteChildren {
   CustomerHistoryRoute: typeof CustomerHistoryRoute
   CustomerProfileRoute: typeof CustomerProfileRoute
@@ -280,7 +307,7 @@ const MechanicRouteWithChildren = MechanicRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   CustomerRoute: CustomerRouteWithChildren,
   MechanicRoute: MechanicRouteWithChildren,
 }
