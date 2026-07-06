@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as MechanicRouteImport } from './routes/mechanic'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -25,6 +26,11 @@ import { Route as AdminMechanicsRouteImport } from './routes/admin.mechanics'
 import { Route as AdminJobsRouteImport } from './routes/admin.jobs'
 import { Route as CustomerRequestServiceRouteImport } from './routes/customer.request.$service'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MechanicRoute = MechanicRouteImport.update({
   id: '/mechanic',
   path: '/mechanic',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/mechanic': typeof MechanicRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/jobs': typeof AdminJobsRoute
   '/admin/mechanics': typeof AdminMechanicsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/jobs': typeof AdminJobsRoute
   '/admin/mechanics': typeof AdminMechanicsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/mechanic': typeof MechanicRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/jobs': typeof AdminJobsRoute
   '/admin/mechanics': typeof AdminMechanicsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customer'
     | '/mechanic'
+    | '/sitemap.xml'
     | '/admin/jobs'
     | '/admin/mechanics'
     | '/admin/users'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/sitemap.xml'
     | '/admin/jobs'
     | '/admin/mechanics'
     | '/admin/users'
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customer'
     | '/mechanic'
+    | '/sitemap.xml'
     | '/admin/jobs'
     | '/admin/mechanics'
     | '/admin/users'
@@ -206,10 +218,18 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   CustomerRoute: typeof CustomerRouteWithChildren
   MechanicRoute: typeof MechanicRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mechanic': {
       id: '/mechanic'
       path: '/mechanic'
@@ -373,6 +393,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   CustomerRoute: CustomerRouteWithChildren,
   MechanicRoute: MechanicRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
