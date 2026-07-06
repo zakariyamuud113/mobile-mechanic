@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomerIndexRouteImport } from './routes/customer.index'
+import { Route as CustomerProfileRouteImport } from './routes/customer.profile'
 import { Route as CustomerHistoryRouteImport } from './routes/customer.history'
 import { Route as CustomerRequestServiceRouteImport } from './routes/customer.request.$service'
 
@@ -30,6 +31,11 @@ const CustomerIndexRoute = CustomerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CustomerRoute,
 } as any)
+const CustomerProfileRoute = CustomerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => CustomerRoute,
+} as any)
 const CustomerHistoryRoute = CustomerHistoryRouteImport.update({
   id: '/history',
   path: '/history',
@@ -45,12 +51,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
+  '/customer/profile': typeof CustomerProfileRoute
   '/customer/': typeof CustomerIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/customer/history': typeof CustomerHistoryRoute
+  '/customer/profile': typeof CustomerProfileRoute
   '/customer': typeof CustomerIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
+  '/customer/profile': typeof CustomerProfileRoute
   '/customer/': typeof CustomerIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
@@ -68,15 +77,22 @@ export interface FileRouteTypes {
     | '/'
     | '/customer'
     | '/customer/history'
+    | '/customer/profile'
     | '/customer/'
     | '/customer/request/$service'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customer/history' | '/customer' | '/customer/request/$service'
+  to:
+    | '/'
+    | '/customer/history'
+    | '/customer/profile'
+    | '/customer'
+    | '/customer/request/$service'
   id:
     | '__root__'
     | '/'
     | '/customer'
     | '/customer/history'
+    | '/customer/profile'
     | '/customer/'
     | '/customer/request/$service'
   fileRoutesById: FileRoutesById
@@ -109,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerIndexRouteImport
       parentRoute: typeof CustomerRoute
     }
+    '/customer/profile': {
+      id: '/customer/profile'
+      path: '/profile'
+      fullPath: '/customer/profile'
+      preLoaderRoute: typeof CustomerProfileRouteImport
+      parentRoute: typeof CustomerRoute
+    }
     '/customer/history': {
       id: '/customer/history'
       path: '/history'
@@ -128,12 +151,14 @@ declare module '@tanstack/react-router' {
 
 interface CustomerRouteChildren {
   CustomerHistoryRoute: typeof CustomerHistoryRoute
+  CustomerProfileRoute: typeof CustomerProfileRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
   CustomerRequestServiceRoute: typeof CustomerRequestServiceRoute
 }
 
 const CustomerRouteChildren: CustomerRouteChildren = {
   CustomerHistoryRoute: CustomerHistoryRoute,
+  CustomerProfileRoute: CustomerProfileRoute,
   CustomerIndexRoute: CustomerIndexRoute,
   CustomerRequestServiceRoute: CustomerRequestServiceRoute,
 }
