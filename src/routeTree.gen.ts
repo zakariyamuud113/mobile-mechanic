@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MechanicRouteImport } from './routes/mechanic'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MechanicIndexRouteImport } from './routes/mechanic.index'
 import { Route as CustomerIndexRouteImport } from './routes/customer.index'
 import { Route as CustomerProfileRouteImport } from './routes/customer.profile'
 import { Route as CustomerHistoryRouteImport } from './routes/customer.history'
@@ -31,6 +32,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MechanicIndexRoute = MechanicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MechanicRoute,
 } as any)
 const CustomerIndexRoute = CustomerIndexRouteImport.update({
   id: '/',
@@ -56,28 +62,30 @@ const CustomerRequestServiceRoute = CustomerRequestServiceRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
-  '/mechanic': typeof MechanicRoute
+  '/mechanic': typeof MechanicRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/customer/': typeof CustomerIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/mechanic': typeof MechanicRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/customer': typeof CustomerIndexRoute
+  '/mechanic': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/customer': typeof CustomerRouteWithChildren
-  '/mechanic': typeof MechanicRoute
+  '/mechanic': typeof MechanicRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/customer/': typeof CustomerIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRouteTypes {
@@ -89,14 +97,15 @@ export interface FileRouteTypes {
     | '/customer/history'
     | '/customer/profile'
     | '/customer/'
+    | '/mechanic/'
     | '/customer/request/$service'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/mechanic'
     | '/customer/history'
     | '/customer/profile'
     | '/customer'
+    | '/mechanic'
     | '/customer/request/$service'
   id:
     | '__root__'
@@ -106,13 +115,14 @@ export interface FileRouteTypes {
     | '/customer/history'
     | '/customer/profile'
     | '/customer/'
+    | '/mechanic/'
     | '/customer/request/$service'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CustomerRoute: typeof CustomerRouteWithChildren
-  MechanicRoute: typeof MechanicRoute
+  MechanicRoute: typeof MechanicRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -137,6 +147,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/mechanic/': {
+      id: '/mechanic/'
+      path: '/'
+      fullPath: '/mechanic/'
+      preLoaderRoute: typeof MechanicIndexRouteImport
+      parentRoute: typeof MechanicRoute
     }
     '/customer/': {
       id: '/customer/'
@@ -187,10 +204,22 @@ const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
   CustomerRouteChildren,
 )
 
+interface MechanicRouteChildren {
+  MechanicIndexRoute: typeof MechanicIndexRoute
+}
+
+const MechanicRouteChildren: MechanicRouteChildren = {
+  MechanicIndexRoute: MechanicIndexRoute,
+}
+
+const MechanicRouteWithChildren = MechanicRoute._addFileChildren(
+  MechanicRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CustomerRoute: CustomerRouteWithChildren,
-  MechanicRoute: MechanicRoute,
+  MechanicRoute: MechanicRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
