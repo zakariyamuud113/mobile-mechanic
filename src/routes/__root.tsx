@@ -77,14 +77,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "RoadReady — On-Demand Mobile Mechanics & Roadside Help" },
+      {
+        name: "description",
+        content:
+          "RoadReady connects Ugandan drivers with verified mobile mechanics and roadside assistance in minutes. Request help, track your pro live, and pay with Mobile Money.",
+      },
+      { name: "author", content: "RoadReady" },
+      { property: "og:title", content: "RoadReady — On-Demand Mobile Mechanics" },
+      {
+        property: "og:description",
+        content: "Verified mobile mechanics and roadside assistance, delivered to your location.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {

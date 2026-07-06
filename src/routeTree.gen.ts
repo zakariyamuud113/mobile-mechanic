@@ -9,38 +9,248 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as MechanicRouteImport } from './routes/mechanic'
+import { Route as CustomerRouteImport } from './routes/customer'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MechanicIndexRouteImport } from './routes/mechanic.index'
+import { Route as CustomerIndexRouteImport } from './routes/customer.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as MechanicProfileRouteImport } from './routes/mechanic.profile'
+import { Route as MechanicEarningsRouteImport } from './routes/mechanic.earnings'
+import { Route as CustomerProfileRouteImport } from './routes/customer.profile'
+import { Route as CustomerHistoryRouteImport } from './routes/customer.history'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminMechanicsRouteImport } from './routes/admin.mechanics'
+import { Route as AdminJobsRouteImport } from './routes/admin.jobs'
+import { Route as CustomerRequestServiceRouteImport } from './routes/customer.request.$service'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MechanicRoute = MechanicRouteImport.update({
+  id: '/mechanic',
+  path: '/mechanic',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerRoute = CustomerRouteImport.update({
+  id: '/customer',
+  path: '/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MechanicIndexRoute = MechanicIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MechanicRoute,
+} as any)
+const CustomerIndexRoute = CustomerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const MechanicProfileRoute = MechanicProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => MechanicRoute,
+} as any)
+const MechanicEarningsRoute = MechanicEarningsRouteImport.update({
+  id: '/earnings',
+  path: '/earnings',
+  getParentRoute: () => MechanicRoute,
+} as any)
+const CustomerProfileRoute = CustomerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const CustomerHistoryRoute = CustomerHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMechanicsRoute = AdminMechanicsRouteImport.update({
+  id: '/mechanics',
+  path: '/mechanics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminJobsRoute = AdminJobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const CustomerRequestServiceRoute = CustomerRequestServiceRouteImport.update({
+  id: '/request/$service',
+  path: '/request/$service',
+  getParentRoute: () => CustomerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/customer': typeof CustomerRouteWithChildren
+  '/mechanic': typeof MechanicRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/jobs': typeof AdminJobsRoute
+  '/admin/mechanics': typeof AdminMechanicsRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/customer/history': typeof CustomerHistoryRoute
+  '/customer/profile': typeof CustomerProfileRoute
+  '/mechanic/earnings': typeof MechanicEarningsRoute
+  '/mechanic/profile': typeof MechanicProfileRoute
+  '/admin/': typeof AdminIndexRoute
+  '/customer/': typeof CustomerIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
+  '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/jobs': typeof AdminJobsRoute
+  '/admin/mechanics': typeof AdminMechanicsRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/customer/history': typeof CustomerHistoryRoute
+  '/customer/profile': typeof CustomerProfileRoute
+  '/mechanic/earnings': typeof MechanicEarningsRoute
+  '/mechanic/profile': typeof MechanicProfileRoute
+  '/admin': typeof AdminIndexRoute
+  '/customer': typeof CustomerIndexRoute
+  '/mechanic': typeof MechanicIndexRoute
+  '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/customer': typeof CustomerRouteWithChildren
+  '/mechanic': typeof MechanicRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/jobs': typeof AdminJobsRoute
+  '/admin/mechanics': typeof AdminMechanicsRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/customer/history': typeof CustomerHistoryRoute
+  '/customer/profile': typeof CustomerProfileRoute
+  '/mechanic/earnings': typeof MechanicEarningsRoute
+  '/mechanic/profile': typeof MechanicProfileRoute
+  '/admin/': typeof AdminIndexRoute
+  '/customer/': typeof CustomerIndexRoute
+  '/mechanic/': typeof MechanicIndexRoute
+  '/customer/request/$service': typeof CustomerRequestServiceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/customer'
+    | '/mechanic'
+    | '/sitemap.xml'
+    | '/admin/jobs'
+    | '/admin/mechanics'
+    | '/admin/users'
+    | '/customer/history'
+    | '/customer/profile'
+    | '/mechanic/earnings'
+    | '/mechanic/profile'
+    | '/admin/'
+    | '/customer/'
+    | '/mechanic/'
+    | '/customer/request/$service'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/sitemap.xml'
+    | '/admin/jobs'
+    | '/admin/mechanics'
+    | '/admin/users'
+    | '/customer/history'
+    | '/customer/profile'
+    | '/mechanic/earnings'
+    | '/mechanic/profile'
+    | '/admin'
+    | '/customer'
+    | '/mechanic'
+    | '/customer/request/$service'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/customer'
+    | '/mechanic'
+    | '/sitemap.xml'
+    | '/admin/jobs'
+    | '/admin/mechanics'
+    | '/admin/users'
+    | '/customer/history'
+    | '/customer/profile'
+    | '/mechanic/earnings'
+    | '/mechanic/profile'
+    | '/admin/'
+    | '/customer/'
+    | '/mechanic/'
+    | '/customer/request/$service'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  CustomerRoute: typeof CustomerRouteWithChildren
+  MechanicRoute: typeof MechanicRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mechanic': {
+      id: '/mechanic'
+      path: '/mechanic'
+      fullPath: '/mechanic'
+      preLoaderRoute: typeof MechanicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer': {
+      id: '/customer'
+      path: '/customer'
+      fullPath: '/customer'
+      preLoaderRoute: typeof CustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +258,143 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mechanic/': {
+      id: '/mechanic/'
+      path: '/'
+      fullPath: '/mechanic/'
+      preLoaderRoute: typeof MechanicIndexRouteImport
+      parentRoute: typeof MechanicRoute
+    }
+    '/customer/': {
+      id: '/customer/'
+      path: '/'
+      fullPath: '/customer/'
+      preLoaderRoute: typeof CustomerIndexRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/mechanic/profile': {
+      id: '/mechanic/profile'
+      path: '/profile'
+      fullPath: '/mechanic/profile'
+      preLoaderRoute: typeof MechanicProfileRouteImport
+      parentRoute: typeof MechanicRoute
+    }
+    '/mechanic/earnings': {
+      id: '/mechanic/earnings'
+      path: '/earnings'
+      fullPath: '/mechanic/earnings'
+      preLoaderRoute: typeof MechanicEarningsRouteImport
+      parentRoute: typeof MechanicRoute
+    }
+    '/customer/profile': {
+      id: '/customer/profile'
+      path: '/profile'
+      fullPath: '/customer/profile'
+      preLoaderRoute: typeof CustomerProfileRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/customer/history': {
+      id: '/customer/history'
+      path: '/history'
+      fullPath: '/customer/history'
+      preLoaderRoute: typeof CustomerHistoryRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/mechanics': {
+      id: '/admin/mechanics'
+      path: '/mechanics'
+      fullPath: '/admin/mechanics'
+      preLoaderRoute: typeof AdminMechanicsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/jobs': {
+      id: '/admin/jobs'
+      path: '/jobs'
+      fullPath: '/admin/jobs'
+      preLoaderRoute: typeof AdminJobsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/customer/request/$service': {
+      id: '/customer/request/$service'
+      path: '/request/$service'
+      fullPath: '/customer/request/$service'
+      preLoaderRoute: typeof CustomerRequestServiceRouteImport
+      parentRoute: typeof CustomerRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminJobsRoute: typeof AdminJobsRoute
+  AdminMechanicsRoute: typeof AdminMechanicsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminJobsRoute: AdminJobsRoute,
+  AdminMechanicsRoute: AdminMechanicsRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface CustomerRouteChildren {
+  CustomerHistoryRoute: typeof CustomerHistoryRoute
+  CustomerProfileRoute: typeof CustomerProfileRoute
+  CustomerIndexRoute: typeof CustomerIndexRoute
+  CustomerRequestServiceRoute: typeof CustomerRequestServiceRoute
+}
+
+const CustomerRouteChildren: CustomerRouteChildren = {
+  CustomerHistoryRoute: CustomerHistoryRoute,
+  CustomerProfileRoute: CustomerProfileRoute,
+  CustomerIndexRoute: CustomerIndexRoute,
+  CustomerRequestServiceRoute: CustomerRequestServiceRoute,
+}
+
+const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
+  CustomerRouteChildren,
+)
+
+interface MechanicRouteChildren {
+  MechanicEarningsRoute: typeof MechanicEarningsRoute
+  MechanicProfileRoute: typeof MechanicProfileRoute
+  MechanicIndexRoute: typeof MechanicIndexRoute
+}
+
+const MechanicRouteChildren: MechanicRouteChildren = {
+  MechanicEarningsRoute: MechanicEarningsRoute,
+  MechanicProfileRoute: MechanicProfileRoute,
+  MechanicIndexRoute: MechanicIndexRoute,
+}
+
+const MechanicRouteWithChildren = MechanicRoute._addFileChildren(
+  MechanicRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  CustomerRoute: CustomerRouteWithChildren,
+  MechanicRoute: MechanicRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
