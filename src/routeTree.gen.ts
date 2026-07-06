@@ -14,6 +14,7 @@ import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MechanicIndexRouteImport } from './routes/mechanic.index'
 import { Route as CustomerIndexRouteImport } from './routes/customer.index'
+import { Route as MechanicEarningsRouteImport } from './routes/mechanic.earnings'
 import { Route as CustomerProfileRouteImport } from './routes/customer.profile'
 import { Route as CustomerHistoryRouteImport } from './routes/customer.history'
 import { Route as CustomerRequestServiceRouteImport } from './routes/customer.request.$service'
@@ -43,6 +44,11 @@ const CustomerIndexRoute = CustomerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CustomerRoute,
 } as any)
+const MechanicEarningsRoute = MechanicEarningsRouteImport.update({
+  id: '/earnings',
+  path: '/earnings',
+  getParentRoute: () => MechanicRoute,
+} as any)
 const CustomerProfileRoute = CustomerProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/mechanic': typeof MechanicRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
+  '/mechanic/earnings': typeof MechanicEarningsRoute
   '/customer/': typeof CustomerIndexRoute
   '/mechanic/': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
+  '/mechanic/earnings': typeof MechanicEarningsRoute
   '/customer': typeof CustomerIndexRoute
   '/mechanic': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/mechanic': typeof MechanicRouteWithChildren
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
+  '/mechanic/earnings': typeof MechanicEarningsRoute
   '/customer/': typeof CustomerIndexRoute
   '/mechanic/': typeof MechanicIndexRoute
   '/customer/request/$service': typeof CustomerRequestServiceRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/mechanic'
     | '/customer/history'
     | '/customer/profile'
+    | '/mechanic/earnings'
     | '/customer/'
     | '/mechanic/'
     | '/customer/request/$service'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/customer/history'
     | '/customer/profile'
+    | '/mechanic/earnings'
     | '/customer'
     | '/mechanic'
     | '/customer/request/$service'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/mechanic'
     | '/customer/history'
     | '/customer/profile'
+    | '/mechanic/earnings'
     | '/customer/'
     | '/mechanic/'
     | '/customer/request/$service'
@@ -162,6 +174,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerIndexRouteImport
       parentRoute: typeof CustomerRoute
     }
+    '/mechanic/earnings': {
+      id: '/mechanic/earnings'
+      path: '/earnings'
+      fullPath: '/mechanic/earnings'
+      preLoaderRoute: typeof MechanicEarningsRouteImport
+      parentRoute: typeof MechanicRoute
+    }
     '/customer/profile': {
       id: '/customer/profile'
       path: '/profile'
@@ -205,10 +224,12 @@ const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
 )
 
 interface MechanicRouteChildren {
+  MechanicEarningsRoute: typeof MechanicEarningsRoute
   MechanicIndexRoute: typeof MechanicIndexRoute
 }
 
 const MechanicRouteChildren: MechanicRouteChildren = {
+  MechanicEarningsRoute: MechanicEarningsRoute,
   MechanicIndexRoute: MechanicIndexRoute,
 }
 
