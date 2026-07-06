@@ -20,6 +20,7 @@ import { Route as MechanicProfileRouteImport } from './routes/mechanic.profile'
 import { Route as MechanicEarningsRouteImport } from './routes/mechanic.earnings'
 import { Route as CustomerProfileRouteImport } from './routes/customer.profile'
 import { Route as CustomerHistoryRouteImport } from './routes/customer.history'
+import { Route as AdminMechanicsRouteImport } from './routes/admin.mechanics'
 import { Route as CustomerRequestServiceRouteImport } from './routes/customer.request.$service'
 
 const MechanicRoute = MechanicRouteImport.update({
@@ -77,6 +78,11 @@ const CustomerHistoryRoute = CustomerHistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => CustomerRoute,
 } as any)
+const AdminMechanicsRoute = AdminMechanicsRouteImport.update({
+  id: '/mechanics',
+  path: '/mechanics',
+  getParentRoute: () => AdminRoute,
+} as any)
 const CustomerRequestServiceRoute = CustomerRequestServiceRouteImport.update({
   id: '/request/$service',
   path: '/request/$service',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/mechanic': typeof MechanicRouteWithChildren
+  '/admin/mechanics': typeof AdminMechanicsRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/mechanic/earnings': typeof MechanicEarningsRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/mechanics': typeof AdminMechanicsRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/mechanic/earnings': typeof MechanicEarningsRoute
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
   '/mechanic': typeof MechanicRouteWithChildren
+  '/admin/mechanics': typeof AdminMechanicsRoute
   '/customer/history': typeof CustomerHistoryRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/mechanic/earnings': typeof MechanicEarningsRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customer'
     | '/mechanic'
+    | '/admin/mechanics'
     | '/customer/history'
     | '/customer/profile'
     | '/mechanic/earnings'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin/mechanics'
     | '/customer/history'
     | '/customer/profile'
     | '/mechanic/earnings'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/customer'
     | '/mechanic'
+    | '/admin/mechanics'
     | '/customer/history'
     | '/customer/profile'
     | '/mechanic/earnings'
@@ -251,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerHistoryRouteImport
       parentRoute: typeof CustomerRoute
     }
+    '/admin/mechanics': {
+      id: '/admin/mechanics'
+      path: '/mechanics'
+      fullPath: '/admin/mechanics'
+      preLoaderRoute: typeof AdminMechanicsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/customer/request/$service': {
       id: '/customer/request/$service'
       path: '/request/$service'
@@ -262,10 +281,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminMechanicsRoute: typeof AdminMechanicsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminMechanicsRoute: AdminMechanicsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
