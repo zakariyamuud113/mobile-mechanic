@@ -151,7 +151,7 @@ function Landing() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
-          <span>© 2026 RoadReady. Effortless mobility, delivered.</span>
+          <span>© 2026 Mobile Mechanic. Effortless mobility, delivered.</span>
           <span>Kampala · East Africa</span>
         </div>
       </footer>
