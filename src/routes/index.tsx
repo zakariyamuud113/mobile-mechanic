@@ -88,8 +88,9 @@ function Landing() {
         <div className="grid gap-4 sm:grid-cols-3">
           {roles.map((r) => (
             <Link
-              key={r.to}
-              to={r.to}
+              key={r.role}
+              to="/auth"
+              search={{ role: r.role }}
               className="group rounded-2xl border border-border bg-card p-6 shadow-card transition-all hover:-translate-y-1 hover:border-primary/50"
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary text-primary">
