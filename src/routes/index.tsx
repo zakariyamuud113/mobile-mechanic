@@ -55,12 +55,7 @@ function Landing() {
       <header className="relative overflow-hidden">
         <div className="bg-glow pointer-events-none absolute inset-0 h-[520px]" />
         <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-12">
-          <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <Wrench className="h-5 w-5" />
-            </span>
-            <span className="font-display text-lg font-semibold">RoadReady</span>
-          </div>
+          <Brand size="md" asLink={false} />
 
           <div className="mx-auto mt-16 max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-muted-foreground">
@@ -71,17 +66,17 @@ function Landing() {
               <span className="text-gradient">a few taps away.</span>
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
-              RoadReady instantly connects drivers with verified mobile mechanics
+              Mobile Mechanic instantly connects drivers with verified mechanics
               and roadside professionals — wherever you are, whenever you need it.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Button asChild size="lg">
-                <Link to="/customer">
+                <Link to="/auth" search={{ role: "customer" }}>
                   Get help now <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="secondary">
-                <Link to="/mechanic">Become a mechanic</Link>
+                <Link to="/auth" search={{ role: "mechanic" }}>Become a mechanic</Link>
               </Button>
             </div>
           </div>
