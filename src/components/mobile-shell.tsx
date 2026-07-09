@@ -28,9 +28,7 @@ export function MobileShell({
     <div className="min-h-screen bg-background">
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col border-x border-border/60 bg-background">
         <div className="flex items-center justify-between px-5 pb-2 pt-4">
-          <Link to="/" className="text-xs font-medium text-muted-foreground hover:text-foreground">
-            ← RoadReady
-          </Link>
+          <Brand size="sm" />
           <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
             {accent}
           </span>
