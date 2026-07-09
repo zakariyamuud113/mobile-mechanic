@@ -10,35 +10,43 @@ import {
   Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { services } from "@/lib/mock-data";
+import { Brand } from "@/components/brand";
+import { services, type ServiceId } from "@/lib/mock-data";
+import type { Role } from "@/lib/job-store";
 
 export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const roles = [
+const roles: {
+  role: Role;
+  title: string;
+  subtitle: string;
+  desc: string;
+  icon: typeof Smartphone;
+}[] = [
   {
-    to: "/customer",
+    role: "customer",
     title: "I need help",
     subtitle: "Customer app",
     desc: "Request a mechanic, track them live, pay with Mobile Money.",
     icon: Smartphone,
   },
   {
-    to: "/mechanic",
+    role: "mechanic",
     title: "I'm a mechanic",
     subtitle: "Pro app",
     desc: "Go online, accept nearby jobs, and grow your earnings.",
     icon: Wrench,
   },
   {
-    to: "/admin",
+    role: "admin",
     title: "Admin console",
     subtitle: "Dashboard",
     desc: "Verify mechanics, monitor jobs, manage the platform.",
     icon: Gauge,
   },
-] as const;
+];
 
 function Landing() {
   return (
