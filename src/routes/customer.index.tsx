@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, ChevronRight, Clock } from "lucide-react";
 import { MapMock } from "@/components/map-mock";
 import { services, vehicles, ugx } from "@/lib/mock-data";
+import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/customer/")({
@@ -11,13 +12,17 @@ export const Route = createFileRoute("/customer/")({
 
 function CustomerHome() {
   const [selected, setSelected] = useState(vehicles[0].id);
+  const { currentUser } = useJobStore();
+  const firstName = (currentUser?.name ?? "there").split(" ")[0];
+  const selectedVehicle = vehicles.find((v) => v.id === selected) ?? vehicles[0];
 
   return (
     <div className="space-y-6">
       <div className="pt-2">
-        <p className="text-sm text-muted-foreground">Good afternoon,</p>
+        <p className="text-sm text-muted-foreground">Hi {firstName},</p>
         <h1 className="text-2xl font-bold">Where do you need help?</h1>
       </div>
+
 
       <MapMock className="h-40" label="Kololo, Kampala · GPS locked" />
 
