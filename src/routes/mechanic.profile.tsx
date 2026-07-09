@@ -28,7 +28,7 @@ function MechanicProfile() {
           <BadgeCheck className="h-4 w-4" /> Verified professional
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Identity and certifications approved by RoadReady.
+          Identity and certifications approved by Mobile Mechanic.
         </p>
       </div>
 
