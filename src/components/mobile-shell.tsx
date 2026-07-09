@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
+import { Brand } from "@/components/brand";
 import { cn } from "@/lib/utils";
 
 export interface NavItem {
