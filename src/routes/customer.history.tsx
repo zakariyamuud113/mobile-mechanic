@@ -1,19 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
-import { history, ugx } from "@/lib/mock-data";
+import { ugx } from "@/lib/mock-data";
+import { useJobStore } from "@/lib/job-store";
 
 export const Route = createFileRoute("/customer/history")({
   component: CustomerHistory,
 });
 
 function CustomerHistory() {
+  const { jobs } = useJobStore();
+  const mine = jobs.filter((j) => j.customer === "You");
+
   return (
     <div className="space-y-4 pt-2">
       <h1 className="text-2xl font-bold">Activity</h1>
 
       <div className="space-y-3">
-        {history.map((r) => (
+        {mine.length === 0 && (
+          <p className="rounded-xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
+            No activity yet. Request a service to get started.
+          </p>
+        )}
+        {mine.map((r) => (
           <div key={r.id} className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-start justify-between">
               <div>
