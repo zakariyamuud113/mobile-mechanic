@@ -3,7 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MapPin, Clock, Check, X, Navigation, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MapMock } from "@/components/map-mock";
-import { incomingJobs, ugx, type ServiceRequest } from "@/lib/mock-data";
+import { ugx } from "@/lib/mock-data";
+import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/mechanic/")({
@@ -11,17 +12,25 @@ export const Route = createFileRoute("/mechanic/")({
 });
 
 function MechanicJobs() {
+  const { currentUser, jobs, acceptJob, updateJobStatus } = useJobStore();
+  const mechanicName = currentUser?.name ?? "David Okello";
+  const firstName = mechanicName.split(" ")[0];
+
   const [online, setOnline] = useState(true);
-  const [accepted, setAccepted] = useState<ServiceRequest | null>(null);
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const jobs = incomingJobs.filter((j) => !dismissed.includes(j.id));
+  const pending = jobs.filter((j) => j.status === "requested" && !dismissed.includes(j.id));
+  const active = jobs.find(
+    (j) =>
+      j.mechanic === mechanicName &&
+      ["accepted", "en-route", "arrived", "in-progress"].includes(j.status),
+  );
 
   return (
     <div className="space-y-5 pt-2">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-muted-foreground">Hi David,</p>
+          <p className="text-sm text-muted-foreground">Hi {firstName},</p>
           <h1 className="text-2xl font-bold">{online ? "You're online" : "You're offline"}</h1>
         </div>
         <button
@@ -55,26 +64,40 @@ function MechanicJobs() {
         ))}
       </div>
 
-      {accepted ? (
+      {active ? (
         <div className="space-y-4">
-          <MapMock className="h-40" label={`Navigate to ${accepted.customer}`} showRoute />
+          <MapMock className="h-40" label={`Navigate to ${active.customer}`} showRoute />
           <div className="rounded-xl border border-primary/40 bg-primary/5 p-4">
             <div className="flex items-center justify-between">
-              <p className="font-semibold">{accepted.service}</p>
-              <span className="font-medium">{ugx(accepted.price)}</span>
+              <p className="font-semibold">{active.service}</p>
+              <span className="font-medium">{ugx(active.price)}</span>
             </div>
             <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" /> {accepted.location}
+              <MapPin className="h-4 w-4" /> {active.location}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {accepted.customer} · {accepted.vehicle}
+              {active.customer} · {active.vehicle}
             </p>
-            <Button className="mt-4 w-full">
-              <Navigation className="h-4 w-4" /> Start navigation
-            </Button>
-            <Button variant="secondary" className="mt-2 w-full" onClick={() => setAccepted(null)}>
-              Complete job
-            </Button>
+            {active.status === "accepted" && (
+              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "en-route")}>
+                <Navigation className="h-4 w-4" /> Start navigation
+              </Button>
+            )}
+            {active.status === "en-route" && (
+              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "arrived")}>
+                Mark arrived
+              </Button>
+            )}
+            {active.status === "arrived" && (
+              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "in-progress")}>
+                Start work
+              </Button>
+            )}
+            {active.status === "in-progress" && (
+              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "completed")}>
+                Complete job
+              </Button>
+            )}
           </div>
         </div>
       ) : !online ? (
@@ -84,13 +107,13 @@ function MechanicJobs() {
       ) : (
         <div>
           <h2 className="mb-2 text-sm font-semibold">Nearby requests</h2>
-          {jobs.length === 0 ? (
+          {pending.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">
               No new requests right now. We'll notify you.
             </div>
           ) : (
             <div className="space-y-3">
-              {jobs.map((job) => (
+              {pending.map((job) => (
                 <div key={job.id} className="rounded-xl border border-border bg-card p-4">
                   <div className="flex items-center justify-between">
                     <p className="font-semibold">{job.service}</p>
@@ -109,7 +132,7 @@ function MechanicJobs() {
                     <Button variant="secondary" size="sm" onClick={() => setDismissed((d) => [...d, job.id])}>
                       <X className="h-4 w-4" /> Decline
                     </Button>
-                    <Button size="sm" onClick={() => setAccepted(job)}>
+                    <Button size="sm" onClick={() => acceptJob(job.id, mechanicName)}>
                       <Check className="h-4 w-4" /> Accept
                     </Button>
                   </div>

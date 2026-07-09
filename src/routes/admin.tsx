@@ -4,8 +4,8 @@ import {
   ShieldCheck,
   Users,
   Activity,
-  Wrench,
 } from "lucide-react";
+import { Brand } from "@/components/brand";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
@@ -26,12 +26,9 @@ function AdminLayout() {
     <div className="min-h-screen bg-background lg:flex">
       {/* Sidebar */}
       <aside className="hidden w-60 shrink-0 border-r border-sidebar-border bg-sidebar lg:flex lg:flex-col">
-        <Link to="/" className="flex items-center gap-2 px-5 py-5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Wrench className="h-5 w-5" />
-          </span>
-          <span className="font-display font-semibold">RoadReady</span>
-        </Link>
+        <div className="px-5 py-5">
+          <Brand size="md" />
+        </div>
         <nav className="flex-1 space-y-1 px-3">
           {nav.map((item) => {
             const active =
