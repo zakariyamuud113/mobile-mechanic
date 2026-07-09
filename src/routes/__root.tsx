@@ -85,13 +85,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Mobile Mechanic connects Ugandan drivers with verified mobile mechanics and roadside assistance in minutes. Request help, track your pro live, and pay with Mobile Money.",
       },
       { name: "author", content: "Mobile Mechanic" },
-      { property: "og:title", content: "Mobile Mechanic — On-Demand Mechanics" },
+      { property: "og:title", content: "Mobile Mechanic — On-Demand Mechanics & Roadside Help" },
       {
         property: "og:description",
-        content: "Verified mobile mechanics and roadside assistance, delivered to your location.",
+        content: "Mobile Mechanic connects Ugandan drivers with verified mobile mechanics and roadside assistance in minutes. Request help, track your pro live, and pay with Mobile Money.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Mobile Mechanic — On-Demand Mechanics & Roadside Help" },
+      { name: "twitter:description", content: "Mobile Mechanic connects Ugandan drivers with verified mobile mechanics and roadside assistance in minutes. Request help, track your pro live, and pay with Mobile Money." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bd749ec4-20b2-42fc-a11f-1b1a5a31b38b/id-preview-370c24e9--922af791-931d-4874-8d21-628b12d12e1c.lovable.app-1783636279222.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bd749ec4-20b2-42fc-a11f-1b1a5a31b38b/id-preview-370c24e9--922af791-931d-4874-8d21-628b12d12e1c.lovable.app-1783636279222.png" },
     ],
     links: [
       {
