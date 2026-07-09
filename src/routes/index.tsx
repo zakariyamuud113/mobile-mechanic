@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/brand";
-import { services, type ServiceId } from "@/lib/mock-data";
+import { services } from "@/lib/mock-data";
 import type { Role } from "@/lib/job-store";
 
 export const Route = createFileRoute("/")({
