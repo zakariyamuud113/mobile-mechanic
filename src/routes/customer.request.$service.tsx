@@ -14,15 +14,20 @@ import { Button } from "@/components/ui/button";
 import { MapMock } from "@/components/map-mock";
 import { StatusBadge } from "@/components/status-badge";
 import { getService, mechanics, ugx, type JobStatus } from "@/lib/mock-data";
+import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/customer/request/$service")({
+  validateSearch: (search: Record<string, unknown>): { vehicle?: string } => ({
+    vehicle: typeof search.vehicle === "string" ? search.vehicle : undefined,
+  }),
   component: RequestFlow,
 });
 
 type Step = "confirm" | "searching" | "tracking" | "rate";
 
 const trackStages: { status: JobStatus; label: string }[] = [
+  { status: "requested", label: "Waiting for a mechanic to accept" },
   { status: "accepted", label: "Mechanic accepted your request" },
   { status: "en-route", label: "On the way to your location" },
   { status: "arrived", label: "Arrived at your location" },
@@ -30,14 +35,18 @@ const trackStages: { status: JobStatus; label: string }[] = [
   { status: "completed", label: "Service completed" },
 ];
 
+const flow: JobStatus[] = ["requested", "accepted", "en-route", "arrived", "in-progress", "completed"];
+
 function RequestFlow() {
   const { service: serviceId } = Route.useParams();
+  const { vehicle } = Route.useSearch();
   const navigate = useNavigate();
   const service = getService(serviceId);
   const mechanic = mechanics[0];
+  const { createJob, updateJobStatus, acceptJob, rateJob, getJob } = useJobStore();
 
   const [step, setStep] = useState<Step>("confirm");
-  const [stage, setStage] = useState(0);
+  const [jobId, setJobId] = useState<string | null>(null);
   const [rating, setRating] = useState(0);
 
   if (!service) {
@@ -51,17 +60,31 @@ function RequestFlow() {
     );
   }
 
+  const job = jobId ? getJob(jobId) : undefined;
+  const status = job?.status ?? "requested";
+  const stage = Math.max(0, flow.indexOf(status));
+
   const startSearch = () => {
+    const created = createJob({
+      service: service.name,
+      vehicle: vehicle ?? "My vehicle",
+      location: "Kololo, Kampala",
+      price: service.basePrice,
+    });
+    setJobId(created.id);
     setStep("searching");
     setTimeout(() => setStep("tracking"), 2200);
   };
 
   const advance = () => {
-    if (stage < trackStages.length - 1) {
-      setStage((s) => s + 1);
-    } else {
+    if (!jobId) return;
+    if (status === "completed") {
       setStep("rate");
+      return;
     }
+    const next = flow[Math.min(flow.length - 1, stage + 1)];
+    if (next === "accepted") acceptJob(jobId, mechanic.name);
+    else updateJobStatus(jobId, next);
   };
 
   return (
@@ -103,6 +126,10 @@ function RequestFlow() {
 
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Vehicle</span>
+              <span className="font-medium">{vehicle ?? "My vehicle"}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Base price</span>
               <span className="font-medium">{ugx(service.basePrice)}</span>
             </div>
@@ -124,9 +151,9 @@ function RequestFlow() {
             <span className="absolute h-20 w-20 animate-ping rounded-full bg-primary/20" />
             <Loader2 className="h-10 w-10 animate-spin text-primary" />
           </div>
-          <h2 className="text-lg font-semibold">Finding your nearest pro…</h2>
+          <h2 className="text-lg font-semibold">Broadcasting to nearby pros…</h2>
           <p className="max-w-xs text-sm text-muted-foreground">
-            Matching you with the closest verified mechanic for {service.name}.
+            Your request is now visible to verified mechanics near you.
           </p>
         </div>
       )}
@@ -139,16 +166,16 @@ function RequestFlow() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/15 font-semibold text-primary">
-                  {mechanic.name.split(" ").map((n) => n[0]).join("")}
+                  {(job?.mechanic ?? mechanic.name).split(" ").map((n) => n[0]).join("")}
                 </span>
                 <div>
-                  <p className="font-semibold">{mechanic.name}</p>
+                  <p className="font-semibold">{job?.mechanic ?? "Awaiting mechanic"}</p>
                   <p className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Star className="h-3 w-3 fill-warning text-warning" /> {mechanic.rating} · {mechanic.jobs} jobs
                   </p>
                 </div>
               </div>
-              <StatusBadge status={trackStages[stage].status} />
+              <StatusBadge status={status} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Button variant="secondary" size="sm">
@@ -183,9 +210,20 @@ function RequestFlow() {
             </ol>
           </div>
 
-          <Button size="lg" className="w-full" onClick={advance}>
-            {stage < trackStages.length - 1 ? "Simulate next update" : "Pay & finish"}
-          </Button>
+          {status === "completed" ? (
+            <Button size="lg" className="w-full" onClick={() => setStep("rate")}>
+              Pay & finish
+            </Button>
+          ) : (
+            <Button size="lg" className="w-full" onClick={advance}>
+              {status === "requested"
+                ? "Simulate a mechanic accepting"
+                : "Simulate next update"}
+            </Button>
+          )}
+          <p className="text-center text-xs text-muted-foreground">
+            This job is live in the Mechanic feed and Admin board — accept it there to see it sync here.
+          </p>
         </>
       )}
 
@@ -200,7 +238,7 @@ function RequestFlow() {
           </div>
 
           <div className="rounded-xl border border-border bg-card p-5 text-center">
-            <p className="text-sm font-medium">How was {mechanic.name}?</p>
+            <p className="text-sm font-medium">How was {job?.mechanic ?? mechanic.name}?</p>
             <div className="mt-3 flex justify-center gap-1.5">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} onClick={() => setRating(n)}>
@@ -215,7 +253,14 @@ function RequestFlow() {
             </div>
           </div>
 
-          <Button size="lg" className="w-full" onClick={() => navigate({ to: "/customer/history" })}>
+          <Button
+            size="lg"
+            className="w-full"
+            onClick={() => {
+              if (jobId && rating) rateJob(jobId, rating);
+              navigate({ to: "/customer/history" });
+            }}
+          >
             Submit & view activity
           </Button>
         </div>
