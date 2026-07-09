@@ -78,14 +78,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "RoadReady — On-Demand Mobile Mechanics & Roadside Help" },
+      { title: "Mobile Mechanic — On-Demand Mechanics & Roadside Help" },
       {
         name: "description",
         content:
-          "RoadReady connects Ugandan drivers with verified mobile mechanics and roadside assistance in minutes. Request help, track your pro live, and pay with Mobile Money.",
+          "Mobile Mechanic connects Ugandan drivers with verified mobile mechanics and roadside assistance in minutes. Request help, track your pro live, and pay with Mobile Money.",
       },
-      { name: "author", content: "RoadReady" },
-      { property: "og:title", content: "RoadReady — On-Demand Mobile Mechanics" },
+      { name: "author", content: "Mobile Mechanic" },
+      { property: "og:title", content: "Mobile Mechanic — On-Demand Mechanics" },
       {
         property: "og:description",
         content: "Verified mobile mechanics and roadside assistance, delivered to your location.",
@@ -98,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
