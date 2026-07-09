@@ -4,8 +4,8 @@ import {
   ShieldCheck,
   Users,
   Activity,
-  Wrench,
 } from "lucide-react";
+import { Brand } from "@/components/brand";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
