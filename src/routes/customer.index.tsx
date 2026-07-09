@@ -68,6 +68,7 @@ function CustomerHome() {
               key={s.id}
               to="/customer/request/$service"
               params={{ service: s.id }}
+              search={{ vehicle: selectedVehicle.name }}
               className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-primary/40"
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
