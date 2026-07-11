@@ -73,6 +73,7 @@ export function LiveMap({ className, label, customer, mechanic, moving, markers,
           },
           title: "Your location",
         });
+        setReady(true);
       })
       .catch(() => !cancelled && setError(true));
     return () => {
