@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MapMock } from "@/components/map-mock";
+import { LiveMap } from "@/components/live-map";
 import { StatusBadge } from "@/components/status-badge";
 import { ugx } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
