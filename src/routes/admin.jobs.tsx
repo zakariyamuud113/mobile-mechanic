@@ -10,9 +10,11 @@ export const Route = createFileRoute("/admin/jobs")({
 
 function AdminJobs() {
   const { jobs } = useJobStore();
-  const activeCount = jobs.filter((j) =>
+  const activeJobs = jobs.filter((j) =>
     ["requested", "accepted", "en-route", "arrived", "in-progress"].includes(j.status),
-  ).length;
+  );
+  const activeCount = activeJobs.length;
+  const markers = activeJobs.map((j) => j.coord ?? coordForLocation(j.location));
 
   return (
     <div className="space-y-5">
@@ -22,7 +24,14 @@ function AdminJobs() {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-3">
-        <MapMock className="h-64 lg:col-span-1" label={`${activeCount} active jobs across Kampala`} showRoute />
+        <LiveMap
+          className="h-64 lg:col-span-1"
+          label={`${activeCount} active jobs across Kampala`}
+          customer={KAMPALA}
+          markers={markers}
+          zoom={12}
+        />
+
 
         <div className="overflow-x-auto rounded-2xl border border-border bg-card lg:col-span-2">
           <table className="w-full text-sm">
