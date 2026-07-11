@@ -108,7 +108,7 @@ function RequestFlow() {
 
       {step === "confirm" && (
         <>
-          <MapMock className="h-44" label="Kololo, Kampala · Auto-detected" />
+          <LiveMap className="h-44" label="Kololo, Kampala · Auto-detected" customer={coordForLocation("Kololo, Kampala")} />
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 text-sm">
               <MapPin className="h-4 w-4 text-primary" />
