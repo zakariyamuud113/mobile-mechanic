@@ -11,9 +11,9 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MapMock } from "@/components/map-mock";
+import { LiveMap } from "@/components/live-map";
 import { StatusBadge } from "@/components/status-badge";
-import { getService, mechanics, ugx, type JobStatus } from "@/lib/mock-data";
+import { getService, mechanics, ugx, coordForLocation, type JobStatus } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
 
