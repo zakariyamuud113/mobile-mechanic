@@ -44,6 +44,7 @@ export function LiveMap({ className, label, customer, mechanic, moving, markers,
   const routeLine = useRef<google.maps.Polyline | null>(null);
   const extraMarkers = useRef<google.maps.Marker[]>([]);
   const [error, setError] = useState(false);
+  const [ready, setReady] = useState(false);
 
   // Init map once.
   useEffect(() => {
