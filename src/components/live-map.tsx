@@ -18,6 +18,10 @@ interface LiveMapProps {
   mechanic?: LatLng;
   /** Animate the mechanic marker gradually toward the customer (live tracking). */
   moving?: boolean;
+  /** Extra job markers to plot (used by the admin overview). */
+  markers?: LatLng[];
+  /** Initial zoom level. */
+  zoom?: number;
 }
 
 // Sleek-dark map styling to match the app theme.
