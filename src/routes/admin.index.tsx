@@ -8,29 +8,35 @@ import {
   Clock,
 } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
-import { ugx, type JobStatus } from "@/lib/mock-data";
+import { ugx } from "@/lib/mock-data";
+import { useJobStore } from "@/lib/job-store";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminOverview,
 });
 
-const stats = [
-  { label: "Active customers", value: "4,182", icon: Users, delta: "+12%" },
-  { label: "Verified mechanics", value: "268", icon: Wrench, delta: "+6%" },
-  { label: "Jobs this week", value: "1,047", icon: Activity, delta: "+21%" },
-  { label: "Revenue (week)", value: ugx(18400000), icon: Banknote, delta: "+15%" },
-];
-
-const activeJobs: { id: string; service: string; mechanic: string; area: string; status: JobStatus }[] = [
-  { id: "r1102", service: "Battery Jump Start", mechanic: "David Okello", area: "Bugolobi", status: "en-route" },
-  { id: "r1103", service: "Diagnosis", mechanic: "Sarah Nabirye", area: "Naguru", status: "in-progress" },
-  { id: "r1104", service: "Towing", mechanic: "Ibrahim Ssali", area: "Ntinda", status: "accepted" },
-  { id: "r1105", service: "Fuel Delivery", mechanic: "Grace Atim", area: "Kololo", status: "arrived" },
-];
+const activeStatuses = ["requested", "accepted", "en-route", "arrived", "in-progress"];
 
 function AdminOverview() {
+  const { jobs } = useJobStore();
+
+  const activeJobs = jobs.filter((j) => activeStatuses.includes(j.status));
+  const completed = jobs.filter((j) => j.status === "completed");
+  const revenue = completed.reduce((sum, j) => sum + j.price, 0);
+  const mechanicsOnJobs = new Set(
+    activeJobs.map((j) => j.mechanic).filter(Boolean),
+  ).size;
+
+  const stats = [
+    { label: "Active customers", value: "4,182", icon: Users, delta: "+12%" },
+    { label: "Mechanics on jobs", value: String(mechanicsOnJobs), icon: Wrench, delta: "live" },
+    { label: "Active jobs now", value: String(activeJobs.length), icon: Activity, delta: "live" },
+    { label: "Revenue (completed)", value: ugx(revenue), icon: Banknote, delta: "+15%" },
+  ];
+
   return (
     <div className="space-y-6">
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="rounded-2xl border border-border bg-card p-5">
@@ -70,8 +76,9 @@ function AdminOverview() {
                 {activeJobs.map((j) => (
                   <tr key={j.id} className="border-t border-border">
                     <td className="py-3 font-medium">{j.service}</td>
-                    <td className="py-3 text-muted-foreground">{j.mechanic}</td>
-                    <td className="py-3 text-muted-foreground">{j.area}</td>
+                    <td className="py-3 text-muted-foreground">{j.mechanic ?? "—"}</td>
+                    <td className="py-3 text-muted-foreground">{j.location.split(/[—,]/)[0].trim()}</td>
+
                     <td className="py-3">
                       <StatusBadge status={j.status} />
                     </td>

@@ -121,6 +121,34 @@ export type JobStatus =
   | "completed"
   | "cancelled";
 
+export interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+/** Central Kampala reference point. */
+export const KAMPALA: LatLng = { lat: 0.3476, lng: 32.5825 };
+
+/** Approximate coordinates for the neighbourhoods used across the app. */
+export const areaCoords: Record<string, LatLng> = {
+  Kololo: { lat: 0.335, lng: 32.59 },
+  Bugolobi: { lat: 0.33, lng: 32.615 },
+  Naguru: { lat: 0.345, lng: 32.605 },
+  Ntinda: { lat: 0.36, lng: 32.61 },
+  Entebbe: { lat: 0.32, lng: 32.57 },
+};
+
+/** Resolve a free-text location to a coordinate (falls back to city centre). */
+export function coordForLocation(location: string): LatLng {
+  const match = Object.keys(areaCoords).find((area) => location.includes(area));
+  return match ? areaCoords[match] : KAMPALA;
+}
+
+/** A nearby mechanic starting point offset from the customer. */
+export function nearbyCoord(base: LatLng, offset = 0.02): LatLng {
+  return { lat: base.lat + offset, lng: base.lng - offset };
+}
+
 export interface ServiceRequest {
   id: string;
   service: string;
@@ -132,6 +160,8 @@ export interface ServiceRequest {
   date: string;
   rating?: number;
   mechanic?: string;
+  coord?: LatLng;
+  mechanicCoord?: LatLng;
 }
 
 export const history: ServiceRequest[] = [
@@ -141,9 +171,10 @@ export const history: ServiceRequest[] = [
 ];
 
 export const incomingJobs: ServiceRequest[] = [
-  { id: "r1102", service: "Battery Jump Start", vehicle: "Toyota Corolla", customer: "James M.", location: "Bugolobi — 1.9 km away", status: "requested", price: 40000, date: "Now" },
-  { id: "r1103", service: "Won't Start Diagnosis", vehicle: "Subaru Forester", customer: "Aisha K.", location: "Naguru — 3.2 km away", status: "requested", price: 50000, date: "Now" },
+  { id: "r1102", service: "Battery Jump Start", vehicle: "Toyota Corolla", customer: "James M.", location: "Bugolobi — 1.9 km away", status: "requested", price: 40000, date: "Now", coord: areaCoords.Bugolobi, mechanicCoord: nearbyCoord(areaCoords.Bugolobi) },
+  { id: "r1103", service: "Won't Start Diagnosis", vehicle: "Subaru Forester", customer: "Aisha K.", location: "Naguru — 3.2 km away", status: "requested", price: 50000, date: "Now", coord: areaCoords.Naguru, mechanicCoord: nearbyCoord(areaCoords.Naguru) },
 ];
+
 
 export const statusLabels: Record<JobStatus, string> = {
   requested: "Requested",

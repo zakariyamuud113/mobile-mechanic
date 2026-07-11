@@ -11,9 +11,9 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MapMock } from "@/components/map-mock";
+import { LiveMap } from "@/components/live-map";
 import { StatusBadge } from "@/components/status-badge";
-import { getService, mechanics, ugx, type JobStatus } from "@/lib/mock-data";
+import { getService, mechanics, ugx, coordForLocation, type JobStatus } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
 
@@ -108,7 +108,7 @@ function RequestFlow() {
 
       {step === "confirm" && (
         <>
-          <MapMock className="h-44" label="Kololo, Kampala · Auto-detected" />
+          <LiveMap className="h-44" label="Kololo, Kampala · Auto-detected" customer={coordForLocation("Kololo, Kampala")} />
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-2 text-sm">
               <MapPin className="h-4 w-4 text-primary" />
@@ -160,7 +160,14 @@ function RequestFlow() {
 
       {step === "tracking" && (
         <>
-          <MapMock className="h-44" label={`${mechanic.name} · ${mechanic.distanceKm} km away`} showRoute />
+          <LiveMap
+            className="h-44"
+            label={`${job?.mechanic ?? mechanic.name} · ${mechanic.distanceKm} km away`}
+            customer={job?.coord ?? coordForLocation("Kololo, Kampala")}
+            mechanic={job?.mechanicCoord}
+            moving={status === "en-route"}
+          />
+
 
           <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center justify-between">

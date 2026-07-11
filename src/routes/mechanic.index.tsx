@@ -2,8 +2,8 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MapPin, Clock, Check, X, Navigation, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MapMock } from "@/components/map-mock";
-import { ugx } from "@/lib/mock-data";
+import { LiveMap } from "@/components/live-map";
+import { ugx, coordForLocation } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +66,14 @@ function MechanicJobs() {
 
       {active ? (
         <div className="space-y-4">
-          <MapMock className="h-40" label={`Navigate to ${active.customer}`} showRoute />
+          <LiveMap
+            className="h-40"
+            label={`Navigate to ${active.customer}`}
+            customer={active.coord ?? coordForLocation(active.location)}
+            mechanic={active.mechanicCoord ?? coordForLocation(active.location)}
+            moving={active.status === "en-route"}
+          />
+
           <div className="rounded-xl border border-primary/40 bg-primary/5 p-4">
             <div className="flex items-center justify-between">
               <p className="font-semibold">{active.service}</p>

@@ -9,6 +9,9 @@ import {
 import {
   history as seedHistory,
   incomingJobs as seedIncoming,
+  areaCoords,
+  coordForLocation,
+  nearbyCoord,
   type JobStatus,
   type ServiceRequest,
 } from "./mock-data";
@@ -29,8 +32,8 @@ const roleNames: Record<Role, string> = {
 
 // Extra live jobs so the admin board and mechanic feed feel populated from the start.
 const seedLiveJobs: ServiceRequest[] = [
-  { id: "r1104", service: "Towing", vehicle: "Toyota Harrier", customer: "Peter O.", location: "Ntinda — 2.7 km away", status: "accepted", price: 90000, date: "Now", mechanic: "Ibrahim Ssali" },
-  { id: "r1105", service: "Fuel Delivery", vehicle: "Mazda Demio", customer: "Ritah N.", location: "Kololo — 1.2 km away", status: "arrived", price: 35000, date: "Now", mechanic: "Grace Atim" },
+  { id: "r1104", service: "Towing", vehicle: "Toyota Harrier", customer: "Peter O.", location: "Ntinda — 2.7 km away", status: "accepted", price: 90000, date: "Now", mechanic: "Ibrahim Ssali", coord: areaCoords.Ntinda, mechanicCoord: nearbyCoord(areaCoords.Ntinda) },
+  { id: "r1105", service: "Fuel Delivery", vehicle: "Mazda Demio", customer: "Ritah N.", location: "Kololo — 1.2 km away", status: "arrived", price: 35000, date: "Now", mechanic: "Grace Atim", coord: areaCoords.Kololo, mechanicCoord: nearbyCoord(areaCoords.Kololo, 0.005) },
 ];
 
 interface JobStore {
@@ -67,6 +70,7 @@ export function JobProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(() => setCurrentUser(null), []);
 
   const createJob = useCallback<JobStore["createJob"]>((input) => {
+    const coord = coordForLocation(input.location);
     const job: ServiceRequest = {
       id: "r" + Math.floor(1000 + Math.random() * 9000),
       service: input.service,
@@ -76,6 +80,8 @@ export function JobProvider({ children }: { children: ReactNode }) {
       status: "requested",
       price: input.price,
       date: "Now",
+      coord,
+      mechanicCoord: nearbyCoord(coord),
     };
     setJobs((prev) => [job, ...prev]);
     return job;
