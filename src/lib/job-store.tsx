@@ -70,6 +70,7 @@ export function JobProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(() => setCurrentUser(null), []);
 
   const createJob = useCallback<JobStore["createJob"]>((input) => {
+    const coord = coordForLocation(input.location);
     const job: ServiceRequest = {
       id: "r" + Math.floor(1000 + Math.random() * 9000),
       service: input.service,
@@ -79,6 +80,8 @@ export function JobProvider({ children }: { children: ReactNode }) {
       status: "requested",
       price: input.price,
       date: "Now",
+      coord,
+      mechanicCoord: nearbyCoord(coord),
     };
     setJobs((prev) => [job, ...prev]);
     return job;
