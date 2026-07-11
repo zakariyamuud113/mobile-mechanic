@@ -9,6 +9,9 @@ import {
 import {
   history as seedHistory,
   incomingJobs as seedIncoming,
+  areaCoords,
+  coordForLocation,
+  nearbyCoord,
   type JobStatus,
   type ServiceRequest,
 } from "./mock-data";
