@@ -53,7 +53,7 @@ export function LiveMap({ className, label, customer, mechanic, moving, markers,
         if (cancelled || !ref.current) return;
         const map = new g.maps.Map(ref.current, {
           center: customer,
-          zoom: 14,
+          zoom,
           disableDefaultUI: true,
           gestureHandling: "greedy",
           styles: darkStyle,
