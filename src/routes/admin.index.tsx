@@ -76,8 +76,9 @@ function AdminOverview() {
                 {activeJobs.map((j) => (
                   <tr key={j.id} className="border-t border-border">
                     <td className="py-3 font-medium">{j.service}</td>
-                    <td className="py-3 text-muted-foreground">{j.mechanic}</td>
-                    <td className="py-3 text-muted-foreground">{j.area}</td>
+                    <td className="py-3 text-muted-foreground">{j.mechanic ?? "—"}</td>
+                    <td className="py-3 text-muted-foreground">{j.location.split(/[—,]/)[0].trim()}</td>
+
                     <td className="py-3">
                       <StatusBadge status={j.status} />
                     </td>
