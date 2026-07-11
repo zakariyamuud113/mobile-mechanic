@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LiveMap } from "@/components/live-map";
 import { StatusBadge } from "@/components/status-badge";
-import { ugx } from "@/lib/mock-data";
+import { ugx, KAMPALA, coordForLocation } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 
 export const Route = createFileRoute("/admin/jobs")({
