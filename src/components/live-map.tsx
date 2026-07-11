@@ -114,7 +114,7 @@ export function LiveMap({ className, label, customer, mechanic, moving, markers,
       markers.forEach((p) => bounds.extend(p));
       map.fitBounds(bounds, 48);
     }
-  }, [markers]);
+  }, [markers, ready]);
 
 
 
