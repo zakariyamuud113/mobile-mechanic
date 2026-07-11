@@ -66,7 +66,14 @@ function MechanicJobs() {
 
       {active ? (
         <div className="space-y-4">
-          <MapMock className="h-40" label={`Navigate to ${active.customer}`} showRoute />
+          <LiveMap
+            className="h-40"
+            label={`Navigate to ${active.customer}`}
+            customer={active.coord ?? coordForLocation(active.location)}
+            mechanic={active.mechanicCoord ?? coordForLocation(active.location)}
+            moving={active.status === "en-route"}
+          />
+
           <div className="rounded-xl border border-primary/40 bg-primary/5 p-4">
             <div className="flex items-center justify-between">
               <p className="font-semibold">{active.service}</p>
