@@ -86,6 +86,36 @@ export function LiveMap({ className, label, customer, mechanic, moving, markers,
     mapRef.current?.setCenter(customer);
   }, [customer.lat, customer.lng]);
 
+  // Plot extra job markers (admin overview) and fit them all in view.
+  useEffect(() => {
+    const g = window.google;
+    const map = mapRef.current;
+    if (!g || !map || !markers) return;
+    extraMarkers.current.forEach((m) => m.setMap(null));
+    extraMarkers.current = markers.map(
+      (pos) =>
+        new g.maps.Marker({
+          position: pos,
+          map,
+          icon: {
+            path: g.maps.SymbolPath.CIRCLE,
+            scale: 6,
+            fillColor: "#f59e0b",
+            fillOpacity: 1,
+            strokeColor: "#ffffff",
+            strokeWeight: 2,
+          },
+        }),
+    );
+    if (markers.length) {
+      const bounds = new g.maps.LatLngBounds();
+      markers.forEach((p) => bounds.extend(p));
+      map.fitBounds(bounds, 48);
+    }
+  }, [markers]);
+
+
+
   // Mechanic marker + route + live movement.
   useEffect(() => {
     const g = window.google;
