@@ -1,4 +1,11 @@
+/// <reference types="google.maps" />
 import { getMapsApiKey } from "./maps.functions";
+
+declare global {
+  interface Window {
+    google: typeof google;
+  }
+}
 
 let loadPromise: Promise<typeof google> | null = null;
 
