@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TrendingUp, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ugx } from "@/lib/mock-data";
+import { useJobStore } from "@/lib/job-store";
 
 export const Route = createFileRoute("/mechanic/earnings")({
   component: MechanicEarnings,
@@ -17,15 +18,33 @@ const weekly = [
   { day: "Sun", amount: 70000 },
 ];
 
-const payouts = [
-  { id: "p1", label: "Battery Jump Start", date: "Today · 14:20", amount: 40000 },
-  { id: "p2", label: "Won't Start Diagnosis", date: "Today · 11:05", amount: 45000 },
-  { id: "p3", label: "Flat Tire Assistance", date: "Yesterday · 16:40", amount: 45000 },
-];
-
 function MechanicEarnings() {
+  const { currentUser, jobs } = useJobStore();
+  const mechanicName = currentUser?.name ?? "David Okello";
+
+  // Completed jobs handled by this mechanic become real payouts.
+  const myCompleted = jobs.filter(
+    (j) => j.mechanic === mechanicName && j.status === "completed",
+  );
+  const livePayouts = myCompleted.map((j) => ({
+    id: j.id,
+    label: j.service,
+    date: j.date === "Now" ? "Just now" : j.date,
+    amount: j.price,
+  }));
+
+  const seedPayouts = [
+    { id: "p1", label: "Battery Jump Start", date: "Today · 14:20", amount: 40000 },
+    { id: "p2", label: "Won't Start Diagnosis", date: "Today · 11:05", amount: 45000 },
+    { id: "p3", label: "Flat Tire Assistance", date: "Yesterday · 16:40", amount: 45000 },
+  ];
+  const payouts = [...livePayouts, ...seedPayouts];
+
   const max = Math.max(...weekly.map((w) => w.amount));
-  const total = weekly.reduce((s, w) => s + w.amount, 0);
+  const total =
+    weekly.reduce((s, w) => s + w.amount, 0) +
+    livePayouts.reduce((s, p) => s + p.amount, 0);
+
 
   return (
     <div className="space-y-6 pt-2">
