@@ -184,7 +184,7 @@ export function LiveMap({ className, label, customer, mechanic, moving, markers,
     }
 
     return () => cancelAnimationFrame(raf);
-  }, [mechanic?.lat, mechanic?.lng, customer.lat, customer.lng, moving]);
+  }, [mechanic?.lat, mechanic?.lng, customer.lat, customer.lng, moving, ready]);
 
   return (
     <div className={cn("relative overflow-hidden rounded-2xl border border-border bg-surface", className)}>
