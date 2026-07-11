@@ -32,8 +32,8 @@ const roleNames: Record<Role, string> = {
 
 // Extra live jobs so the admin board and mechanic feed feel populated from the start.
 const seedLiveJobs: ServiceRequest[] = [
-  { id: "r1104", service: "Towing", vehicle: "Toyota Harrier", customer: "Peter O.", location: "Ntinda — 2.7 km away", status: "accepted", price: 90000, date: "Now", mechanic: "Ibrahim Ssali" },
-  { id: "r1105", service: "Fuel Delivery", vehicle: "Mazda Demio", customer: "Ritah N.", location: "Kololo — 1.2 km away", status: "arrived", price: 35000, date: "Now", mechanic: "Grace Atim" },
+  { id: "r1104", service: "Towing", vehicle: "Toyota Harrier", customer: "Peter O.", location: "Ntinda — 2.7 km away", status: "accepted", price: 90000, date: "Now", mechanic: "Ibrahim Ssali", coord: areaCoords.Ntinda, mechanicCoord: nearbyCoord(areaCoords.Ntinda) },
+  { id: "r1105", service: "Fuel Delivery", vehicle: "Mazda Demio", customer: "Ritah N.", location: "Kololo — 1.2 km away", status: "arrived", price: 35000, date: "Now", mechanic: "Grace Atim", coord: areaCoords.Kololo, mechanicCoord: nearbyCoord(areaCoords.Kololo, 0.005) },
 ];
 
 interface JobStore {
