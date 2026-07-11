@@ -36,12 +36,13 @@ const darkStyle: google.maps.MapTypeStyle[] = [
   { featureType: "transit", stylers: [{ visibility: "off" }] },
 ];
 
-export function LiveMap({ className, label, customer, mechanic, moving }: LiveMapProps) {
+export function LiveMap({ className, label, customer, mechanic, moving, markers, zoom = 14 }: LiveMapProps) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const customerMarker = useRef<google.maps.Marker | null>(null);
   const mechanicMarker = useRef<google.maps.Marker | null>(null);
   const routeLine = useRef<google.maps.Polyline | null>(null);
+  const extraMarkers = useRef<google.maps.Marker[]>([]);
   const [error, setError] = useState(false);
 
   // Init map once.
