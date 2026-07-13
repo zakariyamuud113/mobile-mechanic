@@ -83,9 +83,12 @@ function AdminLayoutInner() {
       <div className="flex-1">
         <header className="flex items-center justify-between border-b border-border px-5 py-4">
           <h1 className="font-display text-lg font-semibold">Admin Console</h1>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
-            AD
-          </span>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground lg:hidden"
+          >
+            <LogOut className="h-3.5 w-3.5" /> Sign out
+          </button>
         </header>
         <div className="border-b border-border px-3 py-2 lg:hidden">
           <div className="flex gap-1 overflow-x-auto">
