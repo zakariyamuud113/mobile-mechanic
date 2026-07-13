@@ -12,7 +12,7 @@ export const Route = createFileRoute("/mechanic/")({
 });
 
 function MechanicJobs() {
-  const { currentUser, jobs, acceptJob, updateJobStatus } = useJobStore();
+  const { currentUser, jobs, acceptJob, updateJobStatus, updateMechanicCoord } = useJobStore();
   const mechanicName = currentUser?.name ?? "David Okello";
   const firstName = mechanicName.split(" ")[0];
 
@@ -25,6 +25,26 @@ function MechanicJobs() {
       j.mechanic === mechanicName &&
       ["accepted", "en-route", "arrived", "in-progress"].includes(j.status),
   );
+
+  // Stream the mechanic's real GPS position to the active job while en route,
+  // so the customer's tracking map reflects the actual location.
+  const activeId = active?.id;
+  const activeStatus = active?.status;
+  useEffect(() => {
+    if (!activeId || activeStatus !== "en-route") return;
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) =>
+        updateMechanicCoord(activeId, {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        }),
+      undefined,
+      { enableHighAccuracy: true, maximumAge: 5000 },
+    );
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [activeId, activeStatus, updateMechanicCoord]);
+
 
   return (
     <div className="space-y-5 pt-2">
