@@ -1,0 +1,39 @@
+rules_version = '2';
+
+// Mobile Mechanic — Firestore security rules.
+// Paste these into Firebase Console → Firestore Database → Rules → Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // User profiles: a user reads/writes only their own profile.
+    // Role is set on create; it can never be self-elevated to 'admin' from the client
+    // (grant admin manually in the console by editing the user's `role` field).
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.role in ['customer', 'mechanic'];
+      allow update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.role == resource.data.role; // cannot change own role
+    }
+
+    // Jobs: any signed-in user can read the live board and create/update jobs.
+    // (Prototype scope — tighten to per-role ownership before production.)
+    match /jobs/{jobId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn();
+      allow delete: if isAdmin();
+    }
+  }
+}

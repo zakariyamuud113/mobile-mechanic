@@ -2,10 +2,26 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { getDb, isFirebaseConfigured } from "./firebase";
+import { useAuth, type Role } from "./auth-store";
 import {
   history as seedHistory,
   incomingJobs as seedIncoming,
@@ -13,10 +29,11 @@ import {
   coordForLocation,
   nearbyCoord,
   type JobStatus,
+  type LatLng,
   type ServiceRequest,
 } from "./mock-data";
 
-export type Role = "customer" | "mechanic" | "admin";
+export type { Role } from "./auth-store";
 
 export interface CurrentUser {
   name: string;
@@ -24,13 +41,7 @@ export interface CurrentUser {
   role: Role;
 }
 
-const roleNames: Record<Role, string> = {
-  customer: "Brian",
-  mechanic: "David Okello",
-  admin: "Admin",
-};
-
-// Extra live jobs so the admin board and mechanic feed feel populated from the start.
+// Demo jobs seeded once into Firestore so boards aren't empty on first run.
 const seedLiveJobs: ServiceRequest[] = [
   { id: "r1104", service: "Towing", vehicle: "Toyota Harrier", customer: "Peter O.", location: "Ntinda — 2.7 km away", status: "accepted", price: 90000, date: "Now", mechanic: "Ibrahim Ssali", coord: areaCoords.Ntinda, mechanicCoord: nearbyCoord(areaCoords.Ntinda) },
   { id: "r1105", service: "Fuel Delivery", vehicle: "Mazda Demio", customer: "Ritah N.", location: "Kololo — 1.2 km away", status: "arrived", price: 35000, date: "Now", mechanic: "Grace Atim", coord: areaCoords.Kololo, mechanicCoord: nearbyCoord(areaCoords.Kololo, 0.005) },
@@ -39,8 +50,6 @@ const seedLiveJobs: ServiceRequest[] = [
 interface JobStore {
   currentUser: CurrentUser | null;
   jobs: ServiceRequest[];
-  signIn: (role: Role, phone: string, name?: string) => void;
-  signOut: () => void;
   createJob: (input: {
     service: string;
     vehicle: string;
@@ -49,76 +58,129 @@ interface JobStore {
   }) => ServiceRequest;
   acceptJob: (id: string, mechanic: string) => void;
   updateJobStatus: (id: string, status: JobStatus) => void;
+  updateMechanicCoord: (id: string, coord: LatLng) => void;
   rateJob: (id: string, rating: number) => void;
   getJob: (id: string) => ServiceRequest | undefined;
 }
 
 const JobContext = createContext<JobStore | null>(null);
 
+/** Firestore rejects undefined values — strip them before writing. */
+function clean<T extends Record<string, unknown>>(obj: T): T {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined),
+  ) as T;
+}
+
 export function JobProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [jobs, setJobs] = useState<ServiceRequest[]>([
-    ...seedIncoming,
-    ...seedLiveJobs,
-    ...seedHistory,
-  ]);
+  const { user, profile } = useAuth();
+  const [jobs, setJobs] = useState<ServiceRequest[]>([]);
+  const seededRef = useRef(false);
 
-  const signIn = useCallback((role: Role, phone: string, name?: string) => {
-    setCurrentUser({ role, phone, name: name?.trim() || roleNames[role] });
-  }, []);
+  const currentUser = useMemo<CurrentUser | null>(
+    () => (profile ? { name: profile.name, phone: profile.phone, role: profile.role } : null),
+    [profile],
+  );
 
-  const signOut = useCallback(() => setCurrentUser(null), []);
+  // Live subscription to all jobs, ordered newest-first.
+  useEffect(() => {
+    if (!isFirebaseConfigured || !user) return;
+    const db = getDb();
+    const q = query(collection(db, "jobs"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snap) => {
+      const next = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<ServiceRequest, "id">) }));
+      setJobs(next);
 
-  const createJob = useCallback<JobStore["createJob"]>((input) => {
-    const coord = coordForLocation(input.location);
-    const job: ServiceRequest = {
-      id: "r" + Math.floor(1000 + Math.random() * 9000),
-      service: input.service,
-      vehicle: input.vehicle,
-      customer: "You",
-      location: input.location,
-      status: "requested",
-      price: input.price,
-      date: "Now",
-      coord,
-      mechanicCoord: nearbyCoord(coord),
-    };
-    setJobs((prev) => [job, ...prev]);
-    return job;
-  }, []);
+      // Seed demo data once if the collection is empty.
+      if (snap.empty && !seededRef.current) {
+        seededRef.current = true;
+        void seedDemoJobs();
+      }
+    });
+    return () => unsub();
+  }, [user]);
 
-  const acceptJob = useCallback((id: string, mechanic: string) => {
-    setJobs((prev) =>
-      prev.map((j) => (j.id === id ? { ...j, status: "accepted", mechanic } : j)),
+  const seedDemoJobs = useCallback(async () => {
+    const db = getDb();
+    const existing = await getDocs(collection(db, "jobs"));
+    if (!existing.empty) return;
+    const all = [...seedIncoming, ...seedLiveJobs, ...seedHistory];
+    await Promise.all(
+      all.map((j, i) =>
+        setDoc(
+          doc(db, "jobs", j.id),
+          clean({ ...j, createdAt: serverTimestamp(), order: i } as Record<string, unknown>),
+        ),
+      ),
     );
   }, []);
 
+  const createJob = useCallback<JobStore["createJob"]>(
+    (input) => {
+      const db = getDb();
+      const ref = doc(collection(db, "jobs"));
+      const coord = coordForLocation(input.location);
+      const job: ServiceRequest = {
+        id: ref.id,
+        service: input.service,
+        vehicle: input.vehicle,
+        customer: profile?.name ?? "You",
+        location: input.location,
+        status: "requested",
+        price: input.price,
+        date: "Now",
+        coord,
+        mechanicCoord: nearbyCoord(coord),
+      };
+      void setDoc(
+        ref,
+        clean({
+          ...job,
+          customerUid: user?.uid ?? null,
+          createdAt: serverTimestamp(),
+        } as Record<string, unknown>),
+      );
+      return job;
+    },
+    [profile, user],
+  );
+
+  const acceptJob = useCallback(
+    (id: string, mechanic: string) => {
+      void updateDoc(
+        doc(getDb(), "jobs", id),
+        clean({ status: "accepted", mechanic, mechanicUid: user?.uid ?? null }),
+      );
+    },
+    [user],
+  );
+
   const updateJobStatus = useCallback((id: string, status: JobStatus) => {
-    setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, status } : j)));
+    void updateDoc(doc(getDb(), "jobs", id), { status });
+  }, []);
+
+  const updateMechanicCoord = useCallback((id: string, coord: LatLng) => {
+    void updateDoc(doc(getDb(), "jobs", id), { mechanicCoord: coord });
   }, []);
 
   const rateJob = useCallback((id: string, rating: number) => {
-    setJobs((prev) => prev.map((j) => (j.id === id ? { ...j, rating } : j)));
+    void updateDoc(doc(getDb(), "jobs", id), { rating });
   }, []);
 
-  const getJob = useCallback(
-    (id: string) => jobs.find((j) => j.id === id),
-    [jobs],
-  );
+  const getJob = useCallback((id: string) => jobs.find((j) => j.id === id), [jobs]);
 
   const value = useMemo<JobStore>(
     () => ({
       currentUser,
       jobs,
-      signIn,
-      signOut,
       createJob,
       acceptJob,
       updateJobStatus,
+      updateMechanicCoord,
       rateJob,
       getJob,
     }),
-    [currentUser, jobs, signIn, signOut, createJob, acceptJob, updateJobStatus, rateJob, getJob],
+    [currentUser, jobs, createJob, acceptJob, updateJobStatus, updateMechanicCoord, rateJob, getJob],
   );
 
   return <JobContext.Provider value={value}>{children}</JobContext.Provider>;

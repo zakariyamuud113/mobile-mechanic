@@ -1,11 +1,14 @@
-import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   ShieldCheck,
   Users,
   Activity,
+  LogOut,
 } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { RoleGate } from "@/components/role-gate";
+import { useAuth } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
@@ -20,7 +23,22 @@ const nav = [
 ];
 
 function AdminLayout() {
+  return (
+    <RoleGate role="admin">
+      <AdminLayoutInner />
+    </RoleGate>
+  );
+}
+
+function AdminLayoutInner() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const { signOutUser } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOutUser();
+    navigate({ to: "/auth", replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-background lg:flex">
@@ -50,8 +68,14 @@ function AdminLayout() {
             );
           })}
         </nav>
-        <div className="border-t border-sidebar-border p-4 text-xs text-muted-foreground">
-          Admin · Kampala HQ
+        <div className="border-t border-sidebar-border p-4">
+          <button
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent/50 hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4" /> Sign out
+          </button>
+          <p className="mt-2 px-3 text-xs text-muted-foreground">Admin · Kampala HQ</p>
         </div>
       </aside>
 
@@ -59,9 +83,12 @@ function AdminLayout() {
       <div className="flex-1">
         <header className="flex items-center justify-between border-b border-border px-5 py-4">
           <h1 className="font-display text-lg font-semibold">Admin Console</h1>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
-            AD
-          </span>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground lg:hidden"
+          >
+            <LogOut className="h-3.5 w-3.5" /> Sign out
+          </button>
         </header>
         <div className="border-b border-border px-3 py-2 lg:hidden">
           <div className="flex gap-1 overflow-x-auto">

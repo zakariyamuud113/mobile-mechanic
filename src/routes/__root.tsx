@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { JobProvider } from "../lib/job-store";
+import { AuthProvider } from "../lib/auth-store";
 
 function NotFoundComponent() {
   return (
@@ -130,10 +131,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <JobProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-      </JobProvider>
+      <AuthProvider>
+        <JobProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </JobProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

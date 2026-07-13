@@ -1,44 +1,44 @@
-# Mobile Mechanic — Cross-Cutting Foundation Pass
+# Make Mobile Mechanic Live with Firebase
 
-The prototype skeleton for all three roles already exists. This plan does the work that touches **Customer + Mechanic + Admin together**, in the order you chose. No backend yet (front-end prototype), no strategy docs yet.
+Bring the prototype to life with **real accounts** and **persistent, real-time data** using your Firebase project — all client-side, so we don't stand up a separate backend. Firebase Auth handles logins and Firestore stores every job, profile, and status change with live sync across roles and devices.
 
-## 1. Rebrand: RoadReady → Mobile Mechanic
+## What you'll need to provide
+Firebase's **web config** (not the Google Maps key). From Firebase Console → Project Settings → "Your apps" → Web app, you'll copy the config object:
+```text
+apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId
+```
+These values are publishable (safe in frontend code). You'll also enable **Phone** sign-in under Firebase Console → Authentication → Sign-in method, and add your preview + published domains to the authorized domains list. I'll tell you exactly which domains once we wire it.
 
-Replace the name everywhere it's baked in (6 files):
-- `src/routes/__root.tsx` — title, meta description, author, og:title/description
-- `src/routes/index.tsx` — landing header, hero copy, footer
-- `src/routes/admin.tsx` — sidebar wordmark
-- `src/components/mobile-shell.tsx` — top-left back label
-- `src/routes/mechanic.profile.tsx` — "approved by" copy
+## 1. Firebase setup in the app
+- Add the `firebase` SDK.
+- Create `src/lib/firebase.ts` that initializes the app from your web config and exports `auth` and `db` (Firestore).
+- Firebase config is publishable, so it lives in code (with values you provide).
 
-### Real logo / wordmark
-- Generate a square brand mark (wrench + location-pin motif in the sleek-dark palette) and save it as an asset.
-- Build a shared `<Brand />` component (mark + "Mobile Mechanic" wordmark, size variants) used in **all three** shells so branding is identical across Customer, Mechanic, and Admin.
-- Wire it as the favicon in `__root.tsx` and delete the default `public/favicon.ico`.
+## 2. Real authentication (phone OTP)
+- Replace the mock OTP in `src/routes/auth.tsx` with real Firebase **phone auth**:
+  - Enter `+256` number → invisible reCAPTCHA → real SMS code → verify.
+  - On first sign-in, create/read a `users/{uid}` profile doc holding `name`, `phone`, and `role`.
+- Add an auth context (`src/lib/auth-store.tsx`) that tracks the signed-in Firebase user + their profile, replacing the in-memory `currentUser` in `job-store.tsx`.
+- Add route guards: Customer/Mechanic/Admin areas redirect to `/auth` when signed out; sign-out actually clears the Firebase session.
+- Admin role is granted via a Firestore role field (set manually in the console for your account) — no privilege escalation from the client.
 
-## 2. Shared branding & headers (cross-cutting)
+## 3. Persistent, real-time job data (Firestore)
+- Convert `src/lib/job-store.tsx` from in-memory state to Firestore-backed:
+  - `createJob`, `acceptJob`, `updateJobStatus`, `rateJob` write to a `jobs` collection.
+  - Screens subscribe with real-time listeners (`onSnapshot`) so a Customer's new request instantly appears in the Mechanic feed and Admin board, and status changes propagate live — now surviving reloads and syncing across devices.
+- Keep the same `ServiceRequest` shape (including `coord`/`mechanicCoord`) so the existing UI and Google Maps live tracking keep working unchanged.
+- Seed the initial demo jobs once into Firestore (idempotent) so the boards aren't empty on first run.
 
-- Introduce the `<Brand />` component above and drop it into: the mobile shell top bar (Customer + Mechanic), the Admin sidebar, and the landing header/footer.
-- Standardize the role-accent chip and header spacing so the three shells read as one product family.
+## 4. Live location tracking (real-time)
+- Mechanic screen writes its live `mechanicCoord` to the active job doc (using the browser Geolocation API while en-route).
+- Customer tracking screen reads that coordinate via the Firestore listener and feeds it to the existing `<LiveMap />`, so the moving marker reflects the mechanic's actual position instead of a simulated path.
 
-## 3. Auth & onboarding shell (front-end only)
-
-- New `/` entry that presents **role selection**: "I need help" (Customer), "I'm a mechanic" (Mechanic), "Admin console".
-- Add a lightweight `/auth` route with a mock phone-number + OTP style sign-in screen (Uganda-forward, e.g. +256), leading into the chosen role. No real auth — a mock "current user" held in a shared client store.
-- Each role landing greets the mock signed-in user by name.
-
-## 4. Shared data & flows (cross-cutting)
-
-- Upgrade `src/lib/mock-data.ts` into a small shared client store (React context + reducer) so state is live across roles in one session:
-  - A job requested by the **Customer** appears in the **Mechanic**'s nearby-jobs feed.
-  - When the Mechanic accepts/updates status, the Customer's tracking screen and the **Admin** live-jobs board reflect the same job.
-  - A single source of truth for job status transitions (`requested → accepted → en-route → arrived → in-progress → completed`).
-- Keep the existing UI screens; rewire them to read/write the shared store instead of static arrays.
+## Security notes
+- I'll include Firestore **security rules** you paste into the console: users read/write only their own profile; customers see their own jobs; mechanics see open + assigned jobs; only admins read everything. This keeps data safe even though access is client-side.
+- Phone auth + reCAPTCHA prevents fake accounts.
 
 ## Out of scope for this pass
-- Real backend (auth, database, live GPS, Mobile Money) — planned as the next phase once flows feel right.
-- Written strategy deliverables (architecture, monetization, GTM, risk) — held off per your choice.
+- Mobile Money / payments, push notifications, and the written strategy docs — next phases once the live data flow feels right.
 
-## Technical notes
-- Shared store lives in a `JobProvider` mounted in `__root.tsx`; roles consume via hooks. State is in-memory (resets on reload) — appropriate for a prototype and a clean swap point for the real backend later.
-- `<Brand />` and role-accent styling use existing semantic tokens in `src/styles.css`; no hardcoded colors.
+## To start
+Once you approve, I'll build steps 1–4. I'll need you to (a) paste your Firebase **web config**, and (b) enable Phone sign-in in the Firebase console — I'll prompt you at the right moment.
