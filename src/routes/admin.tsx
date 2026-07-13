@@ -1,11 +1,14 @@
-import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   ShieldCheck,
   Users,
   Activity,
+  LogOut,
 } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { RoleGate } from "@/components/role-gate";
+import { useAuth } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
@@ -20,7 +23,22 @@ const nav = [
 ];
 
 function AdminLayout() {
+  return (
+    <RoleGate role="admin">
+      <AdminLayoutInner />
+    </RoleGate>
+  );
+}
+
+function AdminLayoutInner() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const { signOutUser } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOutUser();
+    navigate({ to: "/auth", replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-background lg:flex">
