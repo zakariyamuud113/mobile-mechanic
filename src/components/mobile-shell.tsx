@@ -1,6 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Brand } from "@/components/brand";
+import { useAuth } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";
 
 export interface NavItem {
