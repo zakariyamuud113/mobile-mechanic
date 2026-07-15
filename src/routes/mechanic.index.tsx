@@ -15,10 +15,12 @@ export const Route = createFileRoute("/mechanic/")({
 function MechanicJobs() {
   const { currentUser, jobs, acceptJob, updateJobStatus, updateMechanicCoord } = useJobStore();
   const mechanicName = currentUser?.name ?? "David Okello";
+  const mechanicPhone = currentUser?.phone;
   const firstName = mechanicName.split(" ")[0];
 
   const [online, setOnline] = useState(true);
   const [dismissed, setDismissed] = useState<string[]>([]);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const pending = jobs.filter((j) => j.status === "requested" && !dismissed.includes(j.id));
   const active = jobs.find(
