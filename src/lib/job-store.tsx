@@ -56,7 +56,9 @@ interface JobStore {
     location: string;
     price: number;
   }) => ServiceRequest;
-  acceptJob: (id: string, mechanic: string) => void;
+  acceptJob: (id: string, mechanic: string, mechanicPhone?: string) => void;
+  /** Admin-initiated dispatch: assign a mechanic without their acceptance. */
+  dispatchJob: (id: string, mechanicName: string, mechanicPhone?: string) => void;
   updateJobStatus: (id: string, status: JobStatus) => void;
   updateMechanicCoord: (id: string, coord: LatLng) => void;
   rateJob: (id: string, rating: number) => void;
