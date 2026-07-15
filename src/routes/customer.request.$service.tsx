@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { LiveMap } from "@/components/live-map";
 import { StatusBadge } from "@/components/status-badge";
+import { JobChat } from "@/components/job-chat";
 import { getService, mechanics, ugx, coordForLocation, type JobStatus } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
@@ -48,6 +49,7 @@ function RequestFlow() {
   const [step, setStep] = useState<Step>("confirm");
   const [jobId, setJobId] = useState<string | null>(null);
   const [rating, setRating] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
 
   if (!service) {
     return (
@@ -185,10 +187,17 @@ function RequestFlow() {
               <StatusBadge status={status} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <Button variant="secondary" size="sm">
-                <Phone className="h-4 w-4" /> Call
+              <Button variant="secondary" size="sm" asChild disabled={!job?.mechanicPhone}>
+                <a href={job?.mechanicPhone ? `tel:${job.mechanicPhone}` : "#"}>
+                  <Phone className="h-4 w-4" /> Call
+                </a>
               </Button>
-              <Button variant="secondary" size="sm">
+              <Button
+                variant="secondary"
+                size="sm"
+                disabled={!jobId}
+                onClick={() => setChatOpen(true)}
+              >
                 <MessageCircle className="h-4 w-4" /> Chat
               </Button>
             </div>
@@ -271,6 +280,14 @@ function RequestFlow() {
             Submit & view activity
           </Button>
         </div>
+      )}
+
+      {chatOpen && jobId && (
+        <JobChat
+          jobId={jobId}
+          peerLabel={job?.mechanic ?? "Your mechanic"}
+          onClose={() => setChatOpen(false)}
+        />
       )}
     </div>
   );

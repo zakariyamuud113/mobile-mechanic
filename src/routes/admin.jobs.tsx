@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LiveMap } from "@/components/live-map";
 import { StatusBadge } from "@/components/status-badge";
-import { ugx, KAMPALA, coordForLocation } from "@/lib/mock-data";
+import { Button } from "@/components/ui/button";
+import { ugx, KAMPALA, coordForLocation, mechanics as roster } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 
 export const Route = createFileRoute("/admin/jobs")({
@@ -9,12 +10,21 @@ export const Route = createFileRoute("/admin/jobs")({
 });
 
 function AdminJobs() {
-  const { jobs } = useJobStore();
+  const { jobs, dispatchJob } = useJobStore();
   const activeJobs = jobs.filter((j) =>
     ["requested", "accepted", "en-route", "arrived", "in-progress"].includes(j.status),
   );
   const activeCount = activeJobs.length;
   const markers = activeJobs.map((j) => j.coord ?? coordForLocation(j.location));
+
+  const handleDispatch = (jobId: string) => {
+    const approved = roster.filter((m) => m.status === "approved");
+    const options = approved.map((m, i) => `${i + 1}. ${m.name} (${m.specialty})`).join("\n");
+    const pick = window.prompt(`Assign a mechanic to ${jobId}:\n\n${options}\n\nEnter number:`);
+    const idx = pick ? parseInt(pick, 10) - 1 : -1;
+    const chosen = approved[idx];
+    if (chosen) dispatchJob(jobId, chosen.name, chosen.phone);
+  };
 
   return (
     <div className="space-y-5">
@@ -32,7 +42,6 @@ function AdminJobs() {
           zoom={12}
         />
 
-
         <div className="overflow-x-auto rounded-2xl border border-border bg-card lg:col-span-2">
           <table className="w-full text-sm">
             <thead>
@@ -43,6 +52,7 @@ function AdminJobs() {
                 <th className="px-4 py-3 font-medium">Mechanic</th>
                 <th className="px-4 py-3 font-medium">Fee</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium text-right">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -55,6 +65,15 @@ function AdminJobs() {
                   <td className="px-4 py-3">{ugx(j.price)}</td>
                   <td className="px-4 py-3">
                     <StatusBadge status={j.status} />
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    {j.status === "requested" ? (
+                      <Button size="sm" variant="secondary" onClick={() => handleDispatch(j.id)}>
+                        Dispatch
+                      </Button>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </td>
                 </tr>
               ))}

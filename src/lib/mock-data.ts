@@ -162,6 +162,10 @@ export interface ServiceRequest {
   mechanic?: string;
   coord?: LatLng;
   mechanicCoord?: LatLng;
+  customerPhone?: string;
+  mechanicPhone?: string;
+  customerUid?: string;
+  mechanicUid?: string;
 }
 
 export const history: ServiceRequest[] = [

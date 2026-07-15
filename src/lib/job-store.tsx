@@ -56,7 +56,9 @@ interface JobStore {
     location: string;
     price: number;
   }) => ServiceRequest;
-  acceptJob: (id: string, mechanic: string) => void;
+  acceptJob: (id: string, mechanic: string, mechanicPhone?: string) => void;
+  /** Admin-initiated dispatch: assign a mechanic without their acceptance. */
+  dispatchJob: (id: string, mechanicName: string, mechanicPhone?: string) => void;
   updateJobStatus: (id: string, status: JobStatus) => void;
   updateMechanicCoord: (id: string, coord: LatLng) => void;
   rateJob: (id: string, rating: number) => void;
@@ -137,6 +139,7 @@ export function JobProvider({ children }: { children: ReactNode }) {
         clean({
           ...job,
           customerUid: user?.uid ?? null,
+          customerPhone: profile?.phone ?? null,
           createdAt: serverTimestamp(),
         } as Record<string, unknown>),
       );
@@ -146,10 +149,30 @@ export function JobProvider({ children }: { children: ReactNode }) {
   );
 
   const acceptJob = useCallback(
-    (id: string, mechanic: string) => {
+    (id: string, mechanic: string, mechanicPhone?: string) => {
       void updateDoc(
         doc(getDb(), "jobs", id),
-        clean({ status: "accepted", mechanic, mechanicUid: user?.uid ?? null }),
+        clean({
+          status: "accepted",
+          mechanic,
+          mechanicUid: user?.uid ?? null,
+          mechanicPhone: mechanicPhone ?? profile?.phone ?? null,
+        }),
+      );
+    },
+    [user, profile],
+  );
+
+  const dispatchJob = useCallback(
+    (id: string, mechanicName: string, mechanicPhone?: string) => {
+      void updateDoc(
+        doc(getDb(), "jobs", id),
+        clean({
+          status: "accepted",
+          mechanic: mechanicName,
+          mechanicPhone: mechanicPhone ?? null,
+          dispatchedBy: user?.uid ?? null,
+        }),
       );
     },
     [user],
@@ -175,12 +198,13 @@ export function JobProvider({ children }: { children: ReactNode }) {
       jobs,
       createJob,
       acceptJob,
+      dispatchJob,
       updateJobStatus,
       updateMechanicCoord,
       rateJob,
       getJob,
     }),
-    [currentUser, jobs, createJob, acceptJob, updateJobStatus, updateMechanicCoord, rateJob, getJob],
+    [currentUser, jobs, createJob, acceptJob, dispatchJob, updateJobStatus, updateMechanicCoord, rateJob, getJob],
   );
 
   return <JobContext.Provider value={value}>{children}</JobContext.Provider>;

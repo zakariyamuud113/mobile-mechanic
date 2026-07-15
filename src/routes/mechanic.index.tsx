@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MapPin, Clock, Check, X, Navigation, Star } from "lucide-react";
+import { MapPin, Clock, Check, X, Navigation, Star, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiveMap } from "@/components/live-map";
+import { JobChat } from "@/components/job-chat";
 import { ugx, coordForLocation } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
@@ -14,10 +15,12 @@ export const Route = createFileRoute("/mechanic/")({
 function MechanicJobs() {
   const { currentUser, jobs, acceptJob, updateJobStatus, updateMechanicCoord } = useJobStore();
   const mechanicName = currentUser?.name ?? "David Okello";
+  const mechanicPhone = currentUser?.phone;
   const firstName = mechanicName.split(" ")[0];
 
   const [online, setOnline] = useState(true);
   const [dismissed, setDismissed] = useState<string[]>([]);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const pending = jobs.filter((j) => j.status === "requested" && !dismissed.includes(j.id));
   const active = jobs.find(
@@ -105,23 +108,35 @@ function MechanicJobs() {
             <p className="mt-1 text-sm text-muted-foreground">
               {active.customer} · {active.vehicle}
             </p>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Button variant="secondary" size="sm" asChild disabled={!active.customerPhone}>
+                <a href={active.customerPhone ? `tel:${active.customerPhone}` : "#"}>
+                  <Phone className="h-4 w-4" /> Call customer
+                </a>
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setChatOpen(true)}>
+                <MessageCircle className="h-4 w-4" /> Chat
+              </Button>
+            </div>
+
             {active.status === "accepted" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "en-route")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "en-route")}>
                 <Navigation className="h-4 w-4" /> Start navigation
               </Button>
             )}
             {active.status === "en-route" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "arrived")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "arrived")}>
                 Mark arrived
               </Button>
             )}
             {active.status === "arrived" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "in-progress")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "in-progress")}>
                 Start work
               </Button>
             )}
             {active.status === "in-progress" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "completed")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "completed")}>
                 Complete job
               </Button>
             )}
@@ -159,7 +174,7 @@ function MechanicJobs() {
                     <Button variant="secondary" size="sm" onClick={() => setDismissed((d) => [...d, job.id])}>
                       <X className="h-4 w-4" /> Decline
                     </Button>
-                    <Button size="sm" onClick={() => acceptJob(job.id, mechanicName)}>
+                    <Button size="sm" onClick={() => acceptJob(job.id, mechanicName, mechanicPhone)}>
                       <Check className="h-4 w-4" /> Accept
                     </Button>
                   </div>
@@ -174,6 +189,14 @@ function MechanicJobs() {
         <Star className="h-4 w-4 text-warning" />
         Higher acceptance rates unlock priority job matching.
       </div>
+
+      {chatOpen && active && (
+        <JobChat
+          jobId={active.id}
+          peerLabel={active.customer}
+          onClose={() => setChatOpen(false)}
+        />
+      )}
     </div>
   );
 }
