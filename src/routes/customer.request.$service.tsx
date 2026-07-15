@@ -281,6 +281,14 @@ function RequestFlow() {
           </Button>
         </div>
       )}
+
+      {chatOpen && jobId && (
+        <JobChat
+          jobId={jobId}
+          peerLabel={job?.mechanic ?? "Your mechanic"}
+          onClose={() => setChatOpen(false)}
+        />
+      )}
     </div>
   );
 }
