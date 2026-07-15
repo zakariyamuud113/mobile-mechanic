@@ -49,6 +49,7 @@ function RequestFlow() {
   const [step, setStep] = useState<Step>("confirm");
   const [jobId, setJobId] = useState<string | null>(null);
   const [rating, setRating] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
 
   if (!service) {
     return (
