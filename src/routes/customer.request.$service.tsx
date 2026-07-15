@@ -187,10 +187,17 @@ function RequestFlow() {
               <StatusBadge status={status} />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <Button variant="secondary" size="sm">
-                <Phone className="h-4 w-4" /> Call
+              <Button variant="secondary" size="sm" asChild disabled={!job?.mechanicPhone}>
+                <a href={job?.mechanicPhone ? `tel:${job.mechanicPhone}` : "#"}>
+                  <Phone className="h-4 w-4" /> Call
+                </a>
               </Button>
-              <Button variant="secondary" size="sm">
+              <Button
+                variant="secondary"
+                size="sm"
+                disabled={!jobId}
+                onClick={() => setChatOpen(true)}
+              >
                 <MessageCircle className="h-4 w-4" /> Chat
               </Button>
             </div>
