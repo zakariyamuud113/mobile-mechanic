@@ -174,7 +174,7 @@ function MechanicJobs() {
                     <Button variant="secondary" size="sm" onClick={() => setDismissed((d) => [...d, job.id])}>
                       <X className="h-4 w-4" /> Decline
                     </Button>
-                    <Button size="sm" onClick={() => acceptJob(job.id, mechanicName)}>
+                    <Button size="sm" onClick={() => acceptJob(job.id, mechanicName, mechanicPhone)}>
                       <Check className="h-4 w-4" /> Accept
                     </Button>
                   </div>
@@ -189,6 +189,14 @@ function MechanicJobs() {
         <Star className="h-4 w-4 text-warning" />
         Higher acceptance rates unlock priority job matching.
       </div>
+
+      {chatOpen && active && (
+        <JobChat
+          jobId={active.id}
+          peerLabel={active.customer}
+          onClose={() => setChatOpen(false)}
+        />
+      )}
     </div>
   );
 }
