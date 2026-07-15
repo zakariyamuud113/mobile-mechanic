@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MapPin, Clock, Check, X, Navigation, Star } from "lucide-react";
+import { MapPin, Clock, Check, X, Navigation, Star, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiveMap } from "@/components/live-map";
+import { JobChat } from "@/components/job-chat";
 import { ugx, coordForLocation } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
