@@ -10,12 +10,12 @@ import { getFirestore, type Firestore } from "firebase/firestore";
  * vars (VITE_FIREBASE_*). Env vars take precedence when present.
  */
 export const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ?? "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ?? "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID ?? "",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ?? "AIzaSyC-UgWFrnencMoUVZOoW-hgeak3W7v3CO4",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? "mobilemechanic-11664.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? "mobilemechanic-11664",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ?? "mobilemechanic-11664.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? "224074021154",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID ?? "1:224074021154:web:250fca8635e52cc8a48d7b",
 };
 
 /** True once real config values are present. */
