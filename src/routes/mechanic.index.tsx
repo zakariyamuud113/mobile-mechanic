@@ -108,23 +108,35 @@ function MechanicJobs() {
             <p className="mt-1 text-sm text-muted-foreground">
               {active.customer} · {active.vehicle}
             </p>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Button variant="secondary" size="sm" asChild disabled={!active.customerPhone}>
+                <a href={active.customerPhone ? `tel:${active.customerPhone}` : "#"}>
+                  <Phone className="h-4 w-4" /> Call customer
+                </a>
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setChatOpen(true)}>
+                <MessageCircle className="h-4 w-4" /> Chat
+              </Button>
+            </div>
+
             {active.status === "accepted" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "en-route")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "en-route")}>
                 <Navigation className="h-4 w-4" /> Start navigation
               </Button>
             )}
             {active.status === "en-route" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "arrived")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "arrived")}>
                 Mark arrived
               </Button>
             )}
             {active.status === "arrived" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "in-progress")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "in-progress")}>
                 Start work
               </Button>
             )}
             {active.status === "in-progress" && (
-              <Button className="mt-4 w-full" onClick={() => updateJobStatus(active.id, "completed")}>
+              <Button className="mt-3 w-full" onClick={() => updateJobStatus(active.id, "completed")}>
                 Complete job
               </Button>
             )}
