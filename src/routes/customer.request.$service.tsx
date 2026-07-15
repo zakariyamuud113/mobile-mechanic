@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { LiveMap } from "@/components/live-map";
 import { StatusBadge } from "@/components/status-badge";
+import { JobChat } from "@/components/job-chat";
 import { getService, mechanics, ugx, coordForLocation, type JobStatus } from "@/lib/mock-data";
 import { useJobStore } from "@/lib/job-store";
 import { cn } from "@/lib/utils";
